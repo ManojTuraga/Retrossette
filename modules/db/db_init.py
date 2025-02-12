@@ -17,10 +17,10 @@ port = os.getenv( "PGPORT" )
 print( dbname )
 
 try:
-    cnx = psycopg2.connect(user=user, password=password, host=host, database=dbname)
+    #cnx = psycopg2.connect(user=user, password=password, host=host, database=dbname)
     print( "connection successful" )
 except Exception as e:
     print( f"Failed: {e}" )
 
-if cnx:
-    cnx.close()
+#if cnx:
+    #cnx.close()
