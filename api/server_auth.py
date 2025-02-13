@@ -13,6 +13,8 @@ import dotenv
 import requests
 import json
 
+from status_code import StatusCode
+
 # Constant Variable Decls
 spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
@@ -35,9 +37,9 @@ def request_spotify_client_api_token():
                                                'client_secret' : client_secret })
 
     # Check response code
-    status_code = client_auth_req.status_code
-    if (status_code == 200):
+    status_code = StatusCode(client_auth_req.status_code)
+    if (not status_code.is_error()):
         return json.loads(client_auth_req.text)
     else:
-        print(f'ERROR Code {status_code}')
+        status_code.print_error()
         return None
