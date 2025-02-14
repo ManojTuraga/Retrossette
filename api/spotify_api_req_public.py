@@ -10,6 +10,10 @@ import requests
 import json
 
 from server_auth import request_spotify_client_api_token
+from status_code import StatusCode
+
+# Constant Variable Decl
+spotify_url_header = 'https://api.spotify.com/v1/'
 
 # Variables to store API token details
 client_api_token = None
@@ -35,3 +39,29 @@ def get_client_api_token():
     return client_api_token
 
 
+# Get artist data. Returns artist dictionary
+def get_artist(uri):
+    req = requests.request('GET', spotify_url_header + 'artists/' + uri,
+                           headers={ 'Authorization' : 'Bearer ' + get_client_api_token() })
+
+    # Check response code
+    status_code = StatusCode(req.status_code)
+    if (status_code.is_error()):
+        status_code.print_error()
+        return None
+    else:
+        return json.loads(req.text)
+
+    
+# Get track data. Returns track dictionary
+def get_track(uri):
+    req = requests.request('GET', spotify_url_header + 'tracks/' + uri,
+                           headers={ 'Authorization' : 'Bearer ' + get_client_api_token() })
+
+    # Check response code
+    status_code = StatusCode(req.status_code)
+    if (status_code.is_error()):
+        status_code.print_error()
+        return None
+    else:
+        return json.loads(req.text)
