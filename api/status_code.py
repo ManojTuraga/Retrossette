@@ -6,6 +6,7 @@ Description: Class to represent and print certain status codes
 
 class StatusCode():
     msg_dict = { 200 : 'Success',
+                 302 : 'Found', 
                  401 : 'Bad Token: Re-authenticate server or user',
                  403 : 'Bad OAuth Request: Check request',
                  429 : 'App Exceeded Rate Limit: Try again later' }
@@ -28,7 +29,7 @@ class StatusCode():
 
     # Check if error code
     def is_error(self):
-        return (self.code != 200)
+        return ((self.code // 100 == 4) or (self.code // 100 == 5)) 
 
     # Print error
     def print_error(self):
