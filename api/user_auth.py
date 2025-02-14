@@ -29,7 +29,7 @@ spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
 spotify_auth_response_type = 'code'
 redirect_uri = 'http://retrossette-e7hgd5eadee7bshz.centralus-01.azurewebsites.net/'
-scope = ' '.join(['user-read-email']) # Add more permissions if needed
+scope = ' '.join(['user-read-email', 'user-read-private']) # Add more permissions if needed
 show_dialog = 'false' # Determines if user needs to re-authenticate each time
                       # For production should be false. Only true for debugging
 # TODO: Implement state for added security 
@@ -82,7 +82,24 @@ def request_spotify_user_api_token(code):
 
     # Check response code
     status_code = StatusCode(user_api_req.status_code)
-    if (staus_code.is_error()):
+    if (status_code.is_error()):
+        status_code.print_error()
+        return None
+    else:
+        return json.loads(user_api_req.text)
+
+# Exchange a refresh token for API token
+def refresh_spotify_user_api_token(refresh_token):
+    # Construct POST request for user API token
+    user_api_req = requests.request('POST', spotify_api_token_url,
+                                    headers={ 'authorization' : server_auth_code, 
+                                              'content-type' : spotify_content_type },
+                                    data={ 'grant_type' : 'refresh_token',
+                                           'refresh_token' : refresh_token })
+    
+    # Check response code
+    status_code = StatusCode(user_api_req.status_code)
+    if (status_code.is_error()):
         status_code.print_error()
         return None
     else:
