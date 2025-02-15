@@ -35,6 +35,7 @@ jobs:
       - name: Build Node App
         run : |
           cd retrossette-app
+          npm install react-scripts
           npm run build
           cd ..
         
