@@ -31,6 +31,12 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Build Node App
+        run : |
+          cd retrossette-app
+          npm run build
+          cd ..
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
