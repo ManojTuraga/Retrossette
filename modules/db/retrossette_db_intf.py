@@ -1,11 +1,9 @@
 ###############################################################################
 # IMPORTS
 ###############################################################################
-import pathlib
 import psycopg2
 import pathlib
 import os
-from dotenv import load_dotenv
 
 ###############################################################################
 # VARIABLES
@@ -18,11 +16,6 @@ _DB_PORT : int = None
 _DB_CONNECTION = None
 
 ###############################################################################
-# TYPES
-###############################################################################
-
-
-###############################################################################
 # PROCEDURES
 ###############################################################################
 def _intf_init() -> None:
@@ -31,12 +24,6 @@ def _intf_init() -> None:
     global _DB_PASSWORD
     global _DB_HOST
     global _DB_PORT
-
-
-    env_file : pathlib.Path = pathlib.Path( "retrossette_env.env" )
-
-    if( env_file.exists() ):
-        load_dotenv( dotenv_path = env_file.resolve() )
 
     _DB_NAME = os.getenv( "PGDATABASE" )
     _DB_USER = os.getenv( "PGUSER" )

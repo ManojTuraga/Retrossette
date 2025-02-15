@@ -21,21 +21,20 @@ import requests
 import json
 import base64
 
-from status_code import StatusCode
+from modules.api.status_code import StatusCode
 
 # Constant Variable Decls
 spotify_api_auth_url = 'https://accounts.spotify.com/authorize?'
 spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
 spotify_auth_response_type = 'code'
-redirect_uri = 'http://retrossette-e7hgd5eadee7bshz.centralus-01.azurewebsites.net/'
+redirect_uri = 'http://retrossette-e7hgd5eadee7bshz.centralus-01.azurewebsites.net/api/return_from_login'
 scope = ' '.join(['user-read-email', 'user-read-private']) # Add more permissions if needed
 show_dialog = 'false' # Determines if user needs to re-authenticate each time
                       # For production should be false. Only true for debugging
 # TODO: Implement state for added security 
 
 # Get Credentials
-dotenv.load_dotenv()
 client_id = os.environ.get("SPOTIFY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
 server_auth_code = 'Basic ' + base64.b64encode((client_id + ':' + client_secret).encode('ascii')).decode('ascii')
@@ -63,7 +62,8 @@ def request_spotify_user_authentication():
         return None
 
     # Check to see if user accepted auth. request
-    print(user_auth_req.url)
+    print( user_auth_req.__dict__ )
+    return user_auth_req.url
 
 
 # Exchange a user code for an API token

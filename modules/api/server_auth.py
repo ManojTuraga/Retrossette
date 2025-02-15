@@ -13,7 +13,7 @@ import dotenv
 import requests
 import json
 
-from status_code import StatusCode
+from modules.api.status_code import StatusCode
 
 # Constant Variable Decls
 spotify_api_token_url = 'https://accounts.spotify.com/api/token'
