@@ -36,6 +36,7 @@ jobs:
         run : |
           cd retrossette-app
           npm install react-scripts
+          npm install react-router-dom
           npm run build
           cd ..
         
