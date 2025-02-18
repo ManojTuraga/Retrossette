@@ -65,3 +65,48 @@ def get_track(uri):
         return None
     else:
         return json.loads(req.text)
+
+
+# Query tracks. Query can be searched by name, artist, album, International Standard
+# Recording Code (ISRC), genre, and year. Returns a maximum of limit tracks
+# Returns a dictionary with results of search query. The value of the 'items'
+# key returns a list of limit or less number of track dictionaries
+def query_tracks(track_name=None, *, artist=None, album=None, isrc=None, genre=None,
+                 year=None, limit=20):
+    # Check to make sure query is not empty
+    if ((track_name == None) and (artist == None) and (album == None) and
+        (isrc == None) and (genre == None) and (year == None)):
+        print("ERROR: Empty Query")
+        return None
+
+    # Make Query request string
+    q = ''
+
+    if (track_name != None):
+        q += 'track:' + track_name
+    if (artist != None):
+        q += 'artist:' + artist
+    if (album != None):
+        q += 'album:' + album
+    if (isrc != None):
+        q += 'isrc:' + isrc
+    if (genre != None):
+        q += 'genre:' + genre
+    if (year != None):
+        q += 'year:' + year
+
+    # TODO: Add market
+    req = requests.request('GET', spotify_url_header + 'search',
+                           headers={ 'Authorization' : 'Bearer ' + get_client_api_token() }, 
+                           params={ 'q' : q,
+                                    'type' : 'track',
+                                    'limit' : str(limit) })
+                                    #'include_extermal' : 'audio'
+
+    # Check response code
+    status_code = StatusCode(req.status_code)
+    if (status_code.is_error()):
+        status_code.print_error()
+        return None
+    else:
+        return json.loads(req.text)['tracks']
