@@ -10,10 +10,10 @@ import time
 import requests
 import json
 
-from user_auth import request_spotify_user_authentication
-from user_auth import request_spotify_user_api_token
-from user_auth import refresh_spotify_user_api_token
-from status_code import StatusCode
+from modules.api.user_auth import request_spotify_user_authentication
+from modules.api.user_auth import request_spotify_user_api_token
+from modules.api.user_auth import refresh_spotify_user_api_token
+from modules.api.status_code import StatusCode
 
 # Constant variable decls
 spotify_url_header = 'https://api.spotify.com/v1/'

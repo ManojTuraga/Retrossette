@@ -9,8 +9,8 @@ import time
 import requests
 import json
 
-from server_auth import request_spotify_client_api_token
-from status_code import StatusCode
+from modules.api.server_auth import request_spotify_client_api_token
+from modules.api.status_code import StatusCode
 
 # Constant Variable Decl
 spotify_url_header = 'https://api.spotify.com/v1/'
