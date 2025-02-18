@@ -35,6 +35,7 @@ show_dialog = 'false' # Determines if user needs to re-authenticate each time
 # TODO: Implement state for added security 
 
 # Get Credentials
+dotenv.load_dotenv()
 client_id = os.environ.get("SPOTIFY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
 server_auth_code = 'Basic ' + base64.b64encode((client_id + ':' + client_secret).encode('ascii')).decode('ascii')
