@@ -1,4 +1,4 @@
 *~
 env
 __pycache__
-retrossette_env.env
+*.env
