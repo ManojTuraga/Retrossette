@@ -62,7 +62,6 @@ def request_spotify_user_authentication():
         return None
 
     # Check to see if user accepted auth. request
-    print( user_auth_req.__dict__ )
     return user_auth_req.url
 
 
