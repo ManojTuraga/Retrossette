@@ -60,13 +60,14 @@ import pathlib
 
 # From the flask module import the Flask app, the send
 # from directory function, and the redirect function.
-from flask import Flask, send_from_directory, redirect
+from flask import Flask, send_from_directory, redirect, request
 
 # From the retrossette modules, import the user
 # authentication, the server authentication, and
 # the database interface
 from modules.api import user_auth
 from modules.api import server_auth
+from modules.api.spotify_api_req_private import UserSpotifyAPIWrapper
 from modules.db import retrossette_db_intf
 
 ###############################################################################
@@ -99,7 +100,15 @@ def api_login():
 # after returning from spotify
 @app.route( '/api/return_from_login', methods=[ "GET" ] )
 def api_return_from_login():
-    return redirect( "/about" )
+    # Check to see if error
+    if ('error' in request.args.keys()):
+        app.logger.error(f'Error: {request.args["error"]}')
+    else:
+        code = request.args['code']
+        userAPIWrapper = UserSpotifyAPIWrapper(code)
+
+    # Redirect back to home
+    return redirect( "/" )
 
 ###############################################################################
 # CLIENT ROUTES
