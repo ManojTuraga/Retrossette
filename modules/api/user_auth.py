@@ -40,30 +40,29 @@ client_id = os.environ.get("SPOTIFY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
 server_auth_code = 'Basic ' + base64.b64encode((client_id + ':' + client_secret).encode('ascii')).decode('ascii')
 
-# Send a request to spotify to get user approval code
-# If error returns None and prints error
-# If user denied returns -1
-# If success returns a dictionary of the form
-# { code : USER_AUTH_CODE }
+# Prepare a request url to spotify to get user approval code
 # NOTE: This code is NOT the api token for the user. Rather
 # this code is exchanged for an api token
+# Returns url for redirection of spotify request
 def request_spotify_user_authentication():
     # Construct GET request for user authentication
-    user_auth_req = requests.request('GET', spotify_api_auth_url,
+    user_auth_req = requests.Request('GET', spotify_api_auth_url,
                                      params={ 'response_type' : spotify_auth_response_type,
                                               'client_id' : client_id,
                                               'scope' : scope,
                                               'redirect_uri' : redirect_uri,
-                                              'show_dialog' : show_dialog })
+                                              'show_dialog' : show_dialog }).prepare()
 
+    '''
     # Check to make sure no error in request
     status_code = StatusCode(user_auth_req.status_code)
     if (status_code.is_error()):
         status_code.print_error()
         return None
+    '''
 
     # Check to see if user accepted auth. request
-    print( user_auth_req.__dict__ )
+    #print( user_auth_req.__dict__ )
     return user_auth_req.url
 
 
