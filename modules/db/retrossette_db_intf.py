@@ -119,32 +119,34 @@ def try_open_connection() -> bool:
     # Return whether the connection was successful or not
     return _DB_CONNECTION != None
 
-def execute_query( query_string : str, has_return = True ):
+def execute_query( query_string : str, vars = None, has_return = True ):
     """
     Function: Execute Query
 
     Description: This function will execute a query on the database based
                  on the string given
     """
-    global _DB_CONNECTION
-
-    # Create a cursor to the database 
-    cursor = _DB_CONNECTION.cursor()
-
-    # Execute the query on the database
-    cursor.execute( query_string )
-
     return_val = []
+    if try_open_connection():
+        # Create a cursor to the database 
+        cursor = _DB_CONNECTION.cursor()
 
-    if not has_return:
-        # Commit changes to the database if there are edits
-        _DB_CONNECTION.commit()
+        # Execute the query on the database
+        cursor.execute( query_string,
+                    vars=vars )
 
-    else:
-        # Fetch all the relevant tuples from the query
-        return_val = cursor.fetchall()
 
-    cursor.close()
+        if not has_return:
+            # Commit changes to the database if there are edits
+            _DB_CONNECTION.commit()
+
+        else:
+            # Fetch all the relevant tuples from the query
+            return_val = cursor.fetchall()
+
+        cursor.close()
+        close_connection()
+
     return return_val
 
 def close_connection() -> None:
@@ -154,5 +156,8 @@ def close_connection() -> None:
     Description: This Function is a public facing wrapper to close the
                  database connection
     """
+    global _DB_CONNECTION
+
     if _DB_CONNECTION:
         _DB_CONNECTION.close()
+        _DB_CONNECTION = None

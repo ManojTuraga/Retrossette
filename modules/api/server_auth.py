@@ -20,7 +20,6 @@ spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
 
 # Get Credentials
-dotenv.load_dotenv()
 client_id = os.environ.get("SPOTIFY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
 

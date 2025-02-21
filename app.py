@@ -54,37 +54,78 @@ Sources: Flask Documentation, React Documentation
 # Run the init module before starting the application.
 # This will populate all environment variables
 import init
+import json
 
 # Import the pathlib library to elegantly handle filepaths
 import pathlib
+import os
 
 # From the flask module import the Flask app, the send
 # from directory function, and the redirect function.
-from flask import Flask, send_from_directory, redirect, request
+from flask import Flask, send_from_directory, redirect, request, session
+from flask_session import Session
+
+# From the flask Socket IO appliction import the SocketIO
+# App
+from flask_socketio import SocketIO
 
 # From the retrossette modules, import the user
 # authentication, the server authentication, and
 # the database interface
 from modules.api import user_auth
-from modules.api import server_auth
 from modules.api.spotify_api_req_private import UserSpotifyAPIWrapper
-from modules.db import retrossette_db_intf
+from modules.api.spotify_api_req_public import query_tracks
+from modules.db import retrossette_db_queries
+
+from datetime import timedelta
 
 ###############################################################################
 # VARIABLES
 ###############################################################################
 
 # Initialize the Flask app and have it point to the retrossette build
-# directory 
+# directory
 app = Flask( __name__, 
-             root_path = str( pathlib.Path( "retrossette-app/build" ).resolve() ) )
+             root_path=str( pathlib.Path( "retrossette-app/build" ).resolve() ) )
+
+app.secret_key = os.getenv( "SECRET_KEY" )
+app.config[ "SESSION_TYPE" ] = "filesystem"
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta( hours=24 )
+Session( app )
+socketio = SocketIO( app, 
+                     manage_session=False )
 
 ###############################################################################
-# API ROUTES
+# API PUBLIC ENDPOINTS
 ###############################################################################
+# Search for song
+@socketio.on( "/api/search_for_song" )
+def api_search_for_song( data ):
+    return dict( query_tracks( data[ "message" ] ) ) 
 
-# This is the api endpoint to trigger the user
-# login on the spotify page
+# Get Track Information
+
+# Get most popular playlists
+
+# Get songs in playlist
+
+###############################################################################
+# API PRIVATE ENDPOINTS
+###############################################################################
+# Get user profile information
+@socketio.on( "Test" )
+def test( data ):
+    return { "status" : "success" }
+
+# Get playlists for user
+
+# Create a playlist
+
+# Add songs to playlist
+        
+###############################################################################
+# CLIENT ROUTES
+###############################################################################
 @app.route( '/api/login', methods=[ "GET" ] )
 def api_login():
     """
@@ -92,27 +133,36 @@ def api_login():
 
     Description: This function is the api endpoint to trigger a login into
                  the system. This process eventually allow the system to 
-                 have a valid API token to access spotify
+                 have a valid API token to access spotify. Note that this is
+                 not a real API endpoint because it is more reasonable to have
+                 Flask handle the redirection
     """
     return redirect( user_auth.request_spotify_user_authentication() )
 
-# This is a temporary endpoint to prove a valid redirect
-# after returning from spotify
 @app.route( '/api/return_from_login', methods=[ "GET" ] )
 def api_return_from_login():
+    """
+    Function: API Return from Login
+
+    Description: This is the page is that the app is redirected to after a successful
+                 login. The reason that this is not an API endpoint is because the page
+                 needs to be an actual page. Hence, this is a "fake" endpoint
+    """
     # Check to see if error
     if ('error' in request.args.keys()):
         app.logger.error(f'Error: {request.args["error"]}')
     else:
         code = request.args['code']
-        userAPIWrapper = UserSpotifyAPIWrapper(code)
+        session[ "UserAPIWrapper" ] = UserSpotifyAPIWrapper( code )
+        user_profile = session[ "UserAPIWrapper" ].get_user_profile()
+        retrossette_db_queries.add_user( user_uri=user_profile[ "uri" ], 
+                                         user_display_name=user_profile[ "display_name" ],
+                                         user_email=user_profile[ "email" ],
+                                         user_profile_image=None )
 
     # Redirect back to home
     return redirect( "/" )
 
-###############################################################################
-# CLIENT ROUTES
-###############################################################################
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index( path ):
@@ -128,11 +178,15 @@ def index( path ):
     # If the path is not the empty string and there is a real
     # file for said path, return the file
     if path != "" and pathlib.Path( path ).exists():
-        return send_from_directory( app.root_path, path )
+        return send_from_directory( app.root_path, 
+                                    path )
     
     # If the path does not physically exist, let react handle
     # that path by returning the base file
-    return send_from_directory( app.root_path, "index.html" )
+    return send_from_directory( app.root_path, 
+                                "index.html" )
 
 if __name__ == "__main__":
-    app.run()
+    socketio.run( app, 
+                  debug=True, 
+                  host='0.0.0.0' )
