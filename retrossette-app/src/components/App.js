@@ -1,10 +1,9 @@
 import React, { useState, useEffect, ReactS } from 'react';
 import { SOCKET } from './socket.js'
 
-import Search from "./Search.js"
+import CreatePlaylist from './CreatePlaylist.js';
 
-
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 
 function App()
     {
@@ -32,9 +31,11 @@ function App()
         } )
 
     return (
-        <div>
-            <Search />
-        </div>
+            <Router>
+                <Routes>
+                    <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
+                </Routes>
+            </Router>
     );
     }
 

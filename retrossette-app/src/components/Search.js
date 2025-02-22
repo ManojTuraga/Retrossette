@@ -18,7 +18,7 @@ const SearchBar = () => {
                 name: song["name"],
                 uri: song["uri"],
                 duration_ms: song["duration_ms"],
-                image: song[ "album" ][ "images" ][ 0 ],
+                image: song[ "album" ][ "images" ][ 0 ][ "url" ],
                 artists: song["artists"].map(s => s["name"])
             });
         }

@@ -1,0 +1,17 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    height : 100%;
+    overflow-y: auto; /* or scroll */
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    box-sizing: border-box; /* Include padding and border in height calculation */
+  }
+  
+  .grid-image {
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
