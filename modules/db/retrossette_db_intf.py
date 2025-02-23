@@ -119,7 +119,7 @@ def try_open_connection() -> bool:
     # Return whether the connection was successful or not
     return _DB_CONNECTION != None
 
-def execute_query( query_string : str, vars = None, has_return = True ):
+def execute_query( query_string : str, vars = None, has_return = True, force_commit = False ):
     """
     Function: Execute Query
 
@@ -135,17 +135,16 @@ def execute_query( query_string : str, vars = None, has_return = True ):
         cursor.execute( query_string,
                     vars=vars )
 
-
-        if not has_return:
+        if not has_return or force_commit:
             # Commit changes to the database if there are edits
             _DB_CONNECTION.commit()
 
-        else:
+
+        if has_return:
             # Fetch all the relevant tuples from the query
             return_val = cursor.fetchall()
 
         cursor.close()
-        close_connection()
 
     return return_val
 

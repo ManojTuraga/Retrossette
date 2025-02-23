@@ -97,7 +97,9 @@ def init_db():
         """
         CREATE TABLE IF NOT EXISTS "song"
             (
-            song_id INT PRIMARY KEY,
+            song_id TEXT PRIMARY KEY,
+            song_name TEXT NOT NULL,
+            duration_ms INT NOT NULL,
             song_type INT NOT NULL
             );
         """,
@@ -109,7 +111,7 @@ def init_db():
         """
         CREATE TABLE IF NOT EXISTS "playlist"
             (
-            playlist_id INT PRIMARY KEY,
+            playlist_id SERIAL PRIMARY KEY,
             playlist_name TEXT NOT NULL
             );
         """,
@@ -163,7 +165,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS "houses"
             (
             playlist_id INT NOT NULL,
-            song_id INT NOT NULL,
+            song_id TEXT NOT NULL,
             track_number INT NOT NULL,
             FOREIGN KEY (playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE,
             FOREIGN KEY (song_id) REFERENCES song(song_id) ON DELETE CASCADE

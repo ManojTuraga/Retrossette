@@ -10,6 +10,7 @@ const MAX_TIME_IN_MS = 3600000
 function CreatePlaylist ()
     {
     const [searchInput, setSearchInput] = useState('');
+    const [playlistNameInput, setPlaylistNameInput] = useState('');
     const [totalDuration, setTotalDuration] = useState(0);
     const [currSelectedSongs, setCurrSelectedSongs] = useState([]);
     const [searchedSongs, setSearchedSongs] = useState([]);
@@ -17,6 +18,20 @@ function CreatePlaylist ()
     function handleSearchBarChange( e )
         {
         setSearchInput( e.target.value );
+        }
+
+    function handlePlaylistNameChange( e )
+        {
+        setPlaylistNameInput( e.target.value );
+        }
+
+    function sendPlaylist( e )
+        {
+        e.preventDefault();
+        SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs } }, ( response ) =>
+            {
+            window.location.href = response[ "post_submit_url" ];    
+            } )
         }
 
     function sendSearchQuery( e )
@@ -27,14 +42,14 @@ function CreatePlaylist ()
             let newElements = [];
             for( let song of response[ "items" ] ) 
                 {
-                console.log( song )
                 newElements.push(
                     {
                     name: song[ "name" ],
                     uri: song[ "uri" ],
                     duration_ms: song[ "duration_ms" ],
                     image: song[ "album" ][ "images" ][ 0 ][ "url" ],
-                    artists: song[ "artists" ].map( s => s[ "name" ] )
+                    artists: song[ "artists" ].map( s => s[ "name" ] ),
+                    song_type: 0
                     });
                 }
                 setSearchedSongs(newElements);
@@ -66,6 +81,8 @@ function CreatePlaylist ()
     <div className="app">
     <div className="section top-left">
         <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
+        <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
+        <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button>
       </div>
       <div className="section top-right">
         <ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs}/>

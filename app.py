@@ -68,6 +68,7 @@ from flask_session import Session
 # From the flask Socket IO appliction import the SocketIO
 # App
 from flask_socketio import SocketIO
+from flask_cors import CORS
 
 # From the retrossette modules, import the user
 # authentication, the server authentication, and
@@ -92,36 +93,43 @@ app.secret_key = os.getenv( "SECRET_KEY" )
 app.config[ "SESSION_TYPE" ] = "filesystem"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta( hours=24 )
 Session( app )
+CORS( app )
 socketio = SocketIO( app, 
                      manage_session=False )
 
 ###############################################################################
-# API PUBLIC ENDPOINTS
+# API ENDPOINTS
 ###############################################################################
+# Get API token
+@socketio.on( "/api/get_api_token" )
+def api_get_get_api_token( data ):
+    return { "message" : session[ "UserAPIWrapper" ].get_api_token() }
+
 # Search for song
 @socketio.on( "/api/search_for_song" )
 def api_search_for_song( data ):
     return dict( query_tracks( data[ "message" ] ) ) 
 
-# Get Track Information
-
-# Get most popular playlists
-
-# Get songs in playlist
-
-###############################################################################
-# API PRIVATE ENDPOINTS
-###############################################################################
 # Get user profile information
 @socketio.on( "Test" )
 def test( data ):
     return { "status" : "success" }
 
 # Get playlists for user
+@socketio.on( "/api/get_playlists" )
+def api_get_playlists( data ):
+    return { "message" : retrossette_db_queries.get_playlists( session[ "UserURI" ] ) }
 
-# Create a playlist
+# Handle playlist submission
+@socketio.on( "/api/submit_playlist" )
+def api_submit_playlist( data ):
+    print( data[ "message" ] )
+    retrossette_db_queries.add_playlist( session[ "UserURI" ], data[ "message" ] )
+    return { "status" : "success", "post_submit_url" : "/ViewPlaylists" }
 
-# Add songs to playlist
+@socketio.on( "/api/get_songs_from_playlist" )
+def api_get_songs_from_playlist( data ):
+    return { "status" : "success", "message" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) }
         
 ###############################################################################
 # CLIENT ROUTES
@@ -155,19 +163,25 @@ def api_return_from_login():
         code = request.args['code']
         session[ "UserAPIWrapper" ] = UserSpotifyAPIWrapper( code )
         user_profile = session[ "UserAPIWrapper" ].get_user_profile()
+        session[ "UserURI" ] = user_profile[ "uri" ]
         retrossette_db_queries.add_user( user_uri=user_profile[ "uri" ], 
                                          user_display_name=user_profile[ "display_name" ],
                                          user_email=user_profile[ "email" ],
                                          user_profile_image=None )
+        print( session[ "UserAPIWrapper" ].get_user_profile() )
 
-    # Redirect back to home
-    return redirect( "/" )
+    if "ReturnPath" in session.keys():
+        return redirect( session[ "ReturnPath" ] )
+    
+    else:
+        # Redirect back to home
+        return redirect( "/" )
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index( path ):
     """
-    Fucntion: Index
+    Function: Index
 
     Description: This function handles client side routing from the react app.
                  Flask is a server side rendering application while react is
@@ -181,6 +195,10 @@ def index( path ):
         return send_from_directory( app.root_path, 
                                     path )
     
+    if ( path is not None and path != "/" and path.strip() != '') and "UserAPIWrapper" not in session.keys():
+        print( path )
+        return redirect( user_auth.request_spotify_user_authentication() )
+
     # If the path does not physically exist, let react handle
     # that path by returning the base file
     return send_from_directory( app.root_path, 

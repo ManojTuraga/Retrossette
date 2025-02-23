@@ -23,6 +23,27 @@ retrossette_db_intf = module_from_spec( retrossette_db_intf_spec )
 sys.modules[ "retrossette_db_intf" ] = retrossette_db_intf
 retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 
+def get_playlists( user_uri ):
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT playlist_id, playlist_name from playlist; 
+        """, 
+        has_return=True
+    )
+    result = [ { "name" : n, "id" : i } for i, n in result ]
+    return result
+
+def get_songs_in_playlist( playlist_id ):
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT song_id FROM houses WHERE playlist_id=%s ORDER BY track_number; 
+        """, 
+        vars=( playlist_id, ),
+        has_return=True
+    )
+    result = [ id[ 0 ] for id in result ]
+    return result
+
 def user_in_db( user_uri ):
     result = retrossette_db_intf.execute_query(
                 f"""
@@ -35,7 +56,21 @@ def user_in_db( user_uri ):
                 has_return = True
             )
 
-    return[ 0 ][ 0 ]
+    return result[ 0 ][ 0 ]
+
+def song_in_db( song_id ):
+    result = retrossette_db_intf.execute_query(
+                f"""
+                SELECT EXISTS(
+                    SELECT 1
+                    FROM "song"
+                    WHERE song_id='{song_id}'
+                );
+                """,
+                has_return = True
+            )
+
+    return result[ 0 ][ 0 ]
 
 def add_user( user_uri, user_display_name, user_email, user_profile_image=None ):
     if not user_in_db( user_uri ):
@@ -47,4 +82,43 @@ def add_user( user_uri, user_display_name, user_email, user_profile_image=None )
             vars=( user_uri, user_display_name, user_email, user_profile_image ),
             has_return=False
         )
-    pass
+
+def add_playlist( user_uri, playlist ):
+    result = retrossette_db_intf.execute_query(
+                """
+                INSERT INTO playlist (playlist_name)
+                VALUES (%s)
+                RETURNING playlist_id;
+                """,
+                vars=( playlist[ "name" ], ),
+                has_return=True,
+                force_commit=True
+    )
+    retrossette_db_intf.execute_query(
+        """
+        INSERT INTO owns (user_uri, playlist_id)
+        VALUES (%s, %s)
+        """,
+        vars=( user_uri, result[ 0 ][ 0 ] ),
+        has_return=False
+    )
+
+    for index, song in enumerate( playlist[ "songs" ] ):
+        if not song_in_db( song[ "uri" ] ):
+            retrossette_db_intf.execute_query(
+                """
+                INSERT INTO song (song_id, song_name, duration_ms, song_type)
+                VALUES (%s, %s, %s, %s)
+                """,
+                vars=( song[ "uri" ], song[ "name" ], song[ "duration_ms" ], 0 ),
+                has_return=False
+            )
+
+        retrossette_db_intf.execute_query(
+            """
+            INSERT INTO houses (playlist_id, song_id, track_number)
+            VALUES (%s, %s, %s)
+            """,
+            vars=( result[ 0 ][ 0 ], song[ "uri" ], index ),
+            has_return=False
+        )
