@@ -4,6 +4,7 @@ import { SOCKET } from './socket.js'
 import CreatePlaylist from './CreatePlaylist.js';
 import ViewPlaylists from './ViewPlaylists.js';
 import PlayMusic from './PlayMusic.js';
+import Boombox from './Boombox.js';
 
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 
@@ -40,13 +41,16 @@ function App()
         } )
 
     return (
-            <Router>
-                <Routes>
-                    <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
-                    <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
-                    <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
-                </Routes>
-            </Router>
+            // <Router>
+            //     <Routes>
+            //         <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
+            //         <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
+            //         <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
+            //     </Routes>
+            // </Router>
+            <>
+            <Boombox/>
+            </>
     );
     }
 
