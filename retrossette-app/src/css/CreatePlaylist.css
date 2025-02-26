@@ -1,14 +1,30 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 .app {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    height: 100vh;
-    gap: 10px;
-  }
-  
-  .section {
+    grid-template-rows: 3fr 2fr;
+    /*background-color: #aac;*/
+    height: 100%;
+}
+
+.current_cassette {
+    display: grid;
+    background-color: #aac;
+    grid-template-columns: 9fr 1fr 10fr;
+}
+
+.song_selection {
+    display: grid;
+    background-color: #aca;
+    grid-template-rows: 4em 1fr;
+}
+
+.section {
     border: 1px solid #ccc;
     padding: 10px;
     box-sizing: border-box;
-  }
-  
+}
+
