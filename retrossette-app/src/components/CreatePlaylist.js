@@ -77,26 +77,33 @@ function CreatePlaylist ()
         updateTotalDuration( Number( song[ "duration_ms" ] ) );
         }
 
-  return (
-    <div className="app">
-    <div className="section top-left">
-        <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
-        <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
-        <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button>
-      </div>
-      <div className="section top-right">
-        <ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs}/>
-      </div>
-      <div className="section bottom-left">
-        <ImageGrid onImageClick={()=>{}} listOfSongs={[]}/>
-      </div>
-      <div className="section bottom-right">
-        <input type="text" value={searchInput} onChange={ handleSearchBarChange } placeholder="Enter search term..." />
-        <button type="submit" disabled={searchInput.trim().length === 0} onClick={ sendSearchQuery }> Submit</button>
-        <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs}/>
-      </div>
+return (
+    <div className='app'>
+	<div className='current_cassette'>
+	    <div>Cassette Picture/Picture Selection<br></br>
+		<input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
+		<button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button>
+	    </div>
+	    <div>
+		<CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
+	    </div>
+	    <div>
+		<div>Current Songs:</div>
+		<ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs}/>
+	    </div>
+	</div>
+	<div className='song_selection'>
+	    <div>Search Bar<br></br>
+		<input type="text" value={searchInput} onChange={ handleSearchBarChange } placeholder="Enter search term..." />
+		<button type="submit" disabled={searchInput.trim().length === 0} onClick={ sendSearchQuery }> Submit</button>
+		<ImageGrid onImageClick={()=>{}} listOfSongs={[]}/>
+	    </div>
+            <div>
+		<ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs}/>
+	    </div>
+	</div>
     </div>
-  );
+);
 };
 
 export default CreatePlaylist;
