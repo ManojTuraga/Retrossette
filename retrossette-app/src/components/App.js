@@ -41,16 +41,16 @@ function App()
         } )
 
     return (
-            // <Router>
-            //     <Routes>
-            //         <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
-            //         <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
-            //         <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
-            //     </Routes>
-            // </Router>
-            <>
-            <Boombox/>
-            </>
+            <Router>
+                <Routes>
+                    <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
+                    <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
+                    <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
+                </Routes>
+            </Router>
+            // <>
+            // <Boombox/>
+            // </>
     );
     }
 
