@@ -1,17 +1,41 @@
 .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    /*height: 100%;*/
     width: 100%;
-    height : 100%;
     overflow-y: auto; /* or scroll */
     overflow-x: hidden; /* Prevent horizontal overflow */
     box-sizing: border-box; /* Include padding and border in height calculation */
-  }
+}
   
-  .grid-image {
+.grid-image {
+    height: 80%;
+    width: auto;
+    cursor: pointer;
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+.cassette-grid-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    /*height: 100%;*/
     width: 100%;
-    height: auto;
+    overflow-y: auto; /* or scroll */
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    box-sizing: border-box; /* Include padding and border in height calculation */
+}
+
+.cassette-grid-image {
+    width: 40%;
+    /*height: auto;*/
     cursor: pointer;
     box-sizing: border-box; /* Include padding and border in width calculation */
 }

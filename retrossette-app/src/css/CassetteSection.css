@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 20%;
+    box-sizing: border-box;
   }
   
   .cassette-image {
@@ -10,16 +14,16 @@
   }
   
   .progress-bar {
-    width: 100%;
-    height: 10px;
+    width: 10px;
+    height: 100%;
     background-color: #ddd;
     margin-top: 10px;
     position: relative;
   }
   
   .progress-fill {
-    width: 50%; /* Change this value to control the progress */
-    height: 100%;
+    width: 100%; 
+    height: 50%; /* Change this value to control the progress */
     background-color: blue;
     position: absolute;
     top: 0;
