@@ -1,43 +1,135 @@
+/******************************************************************************
+Module: CreatePlaylist.js
+Creation Date: February 18th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga, Ceres Botkin
+
+Description:
+    This page defines the rendering behavior of the CreatePlaylist section
+    of the app. Here, the user can define the songs that are in a playlist
+    and hte name of the playlist
+
+Inputs:
+    None
+
+Outputs:
+    React Component 
+
+Preconditions:
+    A server running on the flask environment must be active
+    
+Postconditions:
+    Unknown
+
+Error Conditions:
+    None
+
+Side Effects:
+    Interactions on the webpage may lead to changes in database state
+
+Invariants:
+    There will only be on instance of the server running at all times
+
+Known Faults
+    None
+    
+Sources: React Documentation, Socketio Documentation
+******************************************************************************/
+
+/*******************************************************************************
+IMPORTS
+*******************************************************************************/
+// From the react library, import the React framework and the use state
+// function
 import React, { useState } from 'react';
-import "../css/CreatePlaylist.css";
+
+// Import the required componenets for this page
 import CassetteSection from './CassetteSection';
 import ImageGrid from './ImageGrid';
-import cassetteImage from '../cassette.jpg';
 
+// Import the styling for this page
+import "../css/CreatePlaylist.css";
+
+// Import the socket io object created in the socket componenet
 import { SOCKET } from './socket';
 
+// Source: https://lovepik.com/image-380224947/vintage-tape-recorder-old-mix-print.html 
+import cassetteImage from '../cassette.jpg';
+
+/*******************************************************************************
+VARIABLES
+*******************************************************************************/
+// Define a variable to determine the maximum capacity
+// of a cassette (in milliseconds)
 const MAX_TIME_IN_MS = 3600000
 
+/*******************************************************************************
+PROCEDURES 
+*******************************************************************************/
+/*
+* This function defines the rendering behavior of the Create Playlists
+* Componenet of the page
+*/
 function CreatePlaylist ()
     {
+    // Define a state variable to hold the value
+    // of the serch input
     const [searchInput, setSearchInput] = useState('');
+   
+    // Define a state variable to hold the value o fhte
+    // playlist name input
     const [playlistNameInput, setPlaylistNameInput] = useState('');
+    
+    // Define a state variable to hold the value of the total
+    // duration of the music
     const [totalDuration, setTotalDuration] = useState(0);
+    
+    // Define a state variable to hold the songs that are
+    // Currently selected to be in the playlist
     const [currSelectedSongs, setCurrSelectedSongs] = useState([]);
+    
+    // Define a state variable to hold the songs that we
+    // currently searched for
     const [searchedSongs, setSearchedSongs] = useState([]);
 
+    // Define a local function to handle changes to the input
+    // in the search bar
     function handleSearchBarChange( e )
         {
         setSearchInput( e.target.value );
         }
 
+    // Define a local function to handle changes to the input
+    // in the search bar
     function handlePlaylistNameChange( e )
         {
         setPlaylistNameInput( e.target.value );
         }
 
+    // Define a local function to handle a click on the submit
+    // button
     function sendPlaylist( e )
         {
+        // Prevent the default behavior on a button click
         e.preventDefault();
+
+        // Send the playlist information to the server and on a response, redirect
+        // to the specified page
         SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs } }, ( response ) =>
             {
             window.location.href = response[ "post_submit_url" ];    
             } )
         }
 
+    // Define a local function that will handle searches for
+    // music on spotify
     function sendSearchQuery( e )
         {
+        // Prevent the default behavior when a button is clicked
         e.preventDefault();
+
+        // Send the search query to the server and on the
+        // response, add all the songs to the image grid
         SOCKET.emit( "/api/search_for_song", { message: searchInput.trim() }, ( response ) => 
             { 
             let newElements = [];
@@ -56,53 +148,63 @@ function CreatePlaylist ()
                 setSearchedSongs(newElements);
             } );
         }
-
+    
+    // Local function to update the total duration of all the songs
+    // that are selected to be in the playlist
     function updateTotalDuration( inc )
         {
         setTotalDuration( totalDuration + inc );
         }
 
+    // Local function to update the current selected songs
+    // when a song is clicked
     function updateFromCurrSelectedSongs( song, index )
         {
+        // Reduce the total duration of the playlist
         updateTotalDuration( 0 - Number( song[ "duration_ms" ] ) );
 
+        // Remove the song from the list of currently songs
+        // while preserving the order of the rest of the songs
         let newList = [...currSelectedSongs];
         newList.splice( index, 1 );
         setCurrSelectedSongs( newList );
         }
 
+    // Local function to update the currently selected songs when 
+    // a song is added to the currently selected songs
     function updateFromSearchedSongs( song, index )
         {
-
         setCurrSelectedSongs( [...currSelectedSongs, song ] );
         updateTotalDuration( Number( song[ "duration_ms" ] ) );
         }
-
-return (
-    <div className='app'>
-	<div className='current_cassette'>
-	    <div>Cassette Picture/Picture Selection<br></br>
-		<input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
-		<button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button> <br></br>
-		<img src={cassetteImage} alt="Cassette" className="cassette-image" />
-	    </div>
-	    <div>
-		<CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
-	    </div>
-	    <div style={{position:'relative'}}>
-		<ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs} isTrackSelection={true}/>
-	    </div>
-	</div>
-	<div>
-	    Search Bar<br></br>
-	    <input type="text" value={searchInput} onChange={ handleSearchBarChange } placeholder="Enter search term..." />
-	    <button type="submit" disabled={searchInput.trim().length === 0} onClick={ sendSearchQuery }> Submit</button>
-	</div>
-	<div className='song_selection'>
-	    <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs} isTrackSelection={false}/>
-	</div>
-    </div>
-);
+    
+    // Render the components that are required for this page
+    return (
+        <div className='app'>
+        <div className='current_cassette'>
+            <div>Cassette Picture/Picture Selection<br></br>
+            <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
+            <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button> <br></br>
+            <img src={cassetteImage} alt="Cassette" className="cassette-image" />
+            </div>
+            <div>
+            <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
+            </div>
+            <div style={{position:'relative'}}>
+            <ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs} isTrackSelection={true}/>
+            </div>
+        </div>
+        <div>
+            Search Bar<br></br>
+            <input type="text" value={searchInput} onChange={ handleSearchBarChange } placeholder="Enter search term..." />
+            <button type="submit" disabled={searchInput.trim().length === 0} onClick={ sendSearchQuery }> Submit</button>
+        </div>
+        <div className='song_selection'>
+            <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs} isTrackSelection={false}/>
+        </div>
+        </div>
+    );
 };
 
+// Export the componenet
 export default CreatePlaylist;
