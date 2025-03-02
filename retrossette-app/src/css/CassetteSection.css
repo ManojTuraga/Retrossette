@@ -1,3 +1,14 @@
+/******************************************************************************
+Module: CassetteSection.css
+Creation Date: February 18th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga, Ceres Botkin
+
+Description:
+    This module defines the styling for the CassetteSection
+******************************************************************************/
+
+/* Define the styling for the parent container */
 .cassette-container {
     display: flex;
     flex-direction: column;
@@ -8,11 +19,12 @@
     box-sizing: border-box;
   }
   
+/* Define the styling of the image that shows up in the section */
   .cassette-image {
     width: 400px;
     height: 300px;
   }
-  
+/* Define the styling for the progress bar*/ 
   .progress-bar {
     width: 10px;
     height: 100%;
@@ -20,7 +32,8 @@
     margin-top: 10px;
     position: relative;
   }
-  
+
+/* Define the styling for the fill of the progress bar */ 
   .progress-fill {
     width: 100%; 
     height: 50%; /* Change this value to control the progress */
@@ -30,6 +43,7 @@
     left: 0;
   }
   
+/* Define the styling for the information on the selected image */ 
   .selected-image-info {
     margin-top: 10px;
     font-size: 16px;

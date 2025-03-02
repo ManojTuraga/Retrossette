@@ -1,27 +1,38 @@
+/******************************************************************************
+Module: CreatePlaylist.css
+Creation Date: February 18th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga, Ceres Botkin
+
+Description:
+    This module defines the styling for the CreatePlaylist Component
+******************************************************************************/
+/* Define the styling for the parent page */
 html, body {
     height: 100%;
     margin: 0;
 }
 
+/* Define the styling for the app class */
 .app {
     display: grid;
     grid-template-rows: 6fr 4em 3fr;
-    /*background-color: #aac;*/
     height: 100vh;
 }
 
+/* Define the styling for the currently selected cassettes */
 .current_cassette {
     display: grid;
-    /*background-color: #aac;*/
     grid-template-columns: 9fr 1fr 10fr;
 }
 
+/* Define the styling for the song selections */
 .song_selection {
-    /*background-color: #aca;*/
     height: 100%;
     position: relative;
 }
 
+/* Define the styling for the entire overall section */
 .section {
     border: 1px solid #ccc;
     padding: 10px;

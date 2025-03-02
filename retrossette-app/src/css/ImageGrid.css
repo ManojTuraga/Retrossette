@@ -1,3 +1,13 @@
+/******************************************************************************
+Module: ImageGrid.css
+Creation Date: February 18th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga, Ceres Botkin
+
+Description:
+    This module defines the styling for the ImageGrid Component
+******************************************************************************/
+/* Define the styling for the image grid parent container */
 .grid-container {
     display: flex;
     gap: 10px;
@@ -5,20 +15,21 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    /*height: 100%;*/
     width: 100%;
-    overflow-y: auto; /* or scroll */
-    overflow-x: hidden; /* Prevent horizontal overflow */
-    box-sizing: border-box; /* Include padding and border in height calculation */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
-  
+
+/* Define the styling for the images that appear in the grid */
 .grid-image {
     height: 80%;
     width: auto;
     cursor: pointer;
-    box-sizing: border-box; /* Include padding and border in width calculation */
+    box-sizing: border-box;
 }
 
+/* Define the styling for the cassette grid container class */
 .cassette-grid-container {
     display: flex;
     gap: 10px;
@@ -26,16 +37,15 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    /*height: 100%;*/
     width: 100%;
-    overflow-y: auto; /* or scroll */
-    overflow-x: hidden; /* Prevent horizontal overflow */
-    box-sizing: border-box; /* Include padding and border in height calculation */
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
+/* Define the styling for the image in the cassette grid */
 .cassette-grid-image {
     width: 40%;
-    /*height: auto;*/
     cursor: pointer;
-    box-sizing: border-box; /* Include padding and border in width calculation */
+    box-sizing: border-box;
 }

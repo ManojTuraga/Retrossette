@@ -47,12 +47,19 @@ import { SOCKET } from './socket';
 /*******************************************************************************
 PROCEDURES
 *******************************************************************************/
+/*
+* This function is a temporary component that allows the 
+* user to see all the playlists that are currently created
+*/
 function ViewPlaylists( { handlePlaylistSelected } )
     {
+    // Create a state variable to store the list of playlists
     const [ listOfPlaylists, setListOfPlaylists ] = useState([]);
 
+    // Request a list of playlists from the server
     SOCKET.emit( "/api/get_playlists", {}, ( response ) => setListOfPlaylists( response[ "message" ] ) )
     
+    // Render teh componenet
     return(
         <ul>
             {
@@ -63,4 +70,6 @@ function ViewPlaylists( { handlePlaylistSelected } )
         </ul>
     )
     }
+
+// Export the componenet
 export default ViewPlaylists;
