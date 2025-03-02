@@ -1,3 +1,45 @@
+'''
+Module: retrossette_db_queries.py
+Creation Date: February 24th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga
+
+Description:
+    This module provides a set of operations to interface with
+    the database under the context of the retrossette application
+
+Inputs:
+    SQL Queries that that perform CRUD operations
+
+Outputs:
+    Query results (if it applies)
+
+Preconditions:
+    Environment variables must exist for the following values
+        PGHOST
+        PGUSER
+        PGPORT
+        PGDATABASE
+        PGPASSWORD
+    
+Postconditions:
+    Unknown
+
+Error Conditions:
+    None
+
+Side Effects:
+    Queries will change database state
+
+Invariants:
+    There is only one database
+
+Known Faults
+    None
+    
+Sources: Postgresql Documentation, EECS 581 Team 42 Final Project
+'''
+
 # Import the pathlib and sys libraries inorder to dynamically
 # import the database interface. This is due to python's wacky
 # way of handling import paths. This makes it so that there
@@ -24,16 +66,40 @@ sys.modules[ "retrossette_db_intf" ] = retrossette_db_intf
 retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 
 def get_playlists( user_uri ):
+    """
+    Function: Get Playlists from Database
+
+    Description: This function quries the database for all the playlists
+                 that are currently created. We have the ability to pass
+                 in user uri into the function that would eventually see
+                 what playlist was created per user but that is not being
+                 used at the moment
+    """
+    # From the playlist table in the database, select the
+    # playlist ID and the name of the playlist
     result = retrossette_db_intf.execute_query(
         """
         SELECT playlist_id, playlist_name from playlist; 
         """, 
         has_return=True
     )
+    # The return of the query is a tuple where the first index
+    # is the playlist ID and the second index is the name of the
+    # playlist. To make this JSONable, convert it into a dictionary
     result = [ { "name" : n, "id" : i } for i, n in result ]
     return result
 
 def get_songs_in_playlist( playlist_id ):
+    """
+    Function: Get Songs in Playlist
+
+    Description: Given a playlist ID, this function queries the database for
+                 all the songs that are in the playlist. We store the track_number
+                 and query sorted by that because we want to play the songs in the
+                 order that they are stored
+    """
+    # From the houses relationship table, select every song id that corresponds
+    # to a given playlist id and order it by the track number
     result = retrossette_db_intf.execute_query(
         """
         SELECT song_id FROM houses WHERE playlist_id=%s ORDER BY track_number; 
@@ -41,10 +107,23 @@ def get_songs_in_playlist( playlist_id ):
         vars=( playlist_id, ),
         has_return=True
     )
+    # The result of this query is a tuple with the first element as the
+    # song id. Convert this into a list so it is JSONable
     result = [ id[ 0 ] for id in result ]
     return result
 
 def user_in_db( user_uri ):
+    """
+    Function: Check if User is in Database
+
+    Description: This function checks if a user is in the database. The
+                 reason why we store the user in the database is that we
+                 need to preserve the integrity of the relational model.
+                 We also believe it's more efficent to query spotify as
+                 little as possible
+    """
+    # This query will return 1 if it finds a matching user
+    # in the database
     result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT EXISTS(
@@ -56,9 +135,22 @@ def user_in_db( user_uri ):
                 has_return = True
             )
 
+    # The result of this query is a list with a single query with
+    # the first element as the boolean value we need
     return result[ 0 ][ 0 ]
 
 def song_in_db( song_id ):
+    """
+    Function: Check if Song is in Database
+
+    Description: This function checks if a song is in the database. We
+                 want to store the song in the database to preserve the
+                 integrity of the relational model. This function will
+                 only be used when adding a new song. We don't want to
+                 add a song if it already exists.
+    """
+    # Following the logic from the user in table check,
+    # return 1 if a song_id can be found in the song table.
     result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT EXISTS(
@@ -70,9 +162,20 @@ def song_in_db( song_id ):
                 has_return = True
             )
 
+    # Parse only the value that the we need from the return
     return result[ 0 ][ 0 ]
 
 def add_user( user_uri, user_display_name, user_email, user_profile_image=None ):
+    """
+    Function: Add User to the database
+
+    Description: This function inserts a new user into the database. The function
+                 stores the user's spotify URI, display name, email and profile image.
+                 The reason why we store this information is to preserve the integrity
+                 of the relational model.
+    """
+    # If the user is not in the database, add the new user into it along with
+    # any meta information that will be displayed on the website
     if not user_in_db( user_uri ):
         retrossette_db_intf.execute_query(
             """
@@ -84,6 +187,17 @@ def add_user( user_uri, user_display_name, user_email, user_profile_image=None )
         )
 
 def add_playlist( user_uri, playlist ):
+    """
+    Function: Add Playlist to the database
+
+    Description: This function stores a newly created playlist into the database.
+                 We don't need to specify a key because we are using the automatic
+                 increment provided by postgresql. For every song that is in the
+                 playlist, this functions also stores the songs that are in the
+                 playlist if it does not already exist in the database
+    """
+    # Add the playlist name into the database. This table just maps
+    # the id to the name of the playlist
     result = retrossette_db_intf.execute_query(
                 """
                 INSERT INTO playlist (playlist_name)
@@ -94,6 +208,10 @@ def add_playlist( user_uri, playlist ):
                 has_return=True,
                 force_commit=True
     )
+
+    # In the owns table, map the user_uri to the playlist_id.
+    # This table will show all the playlists that were created
+    # by a specified user
     retrossette_db_intf.execute_query(
         """
         INSERT INTO owns (user_uri, playlist_id)
@@ -103,8 +221,15 @@ def add_playlist( user_uri, playlist ):
         has_return=False
     )
 
+    # For every song that is in the playlist, if the song
+    # has not already been stored, store the name, duration,
+    # and song type. The song type will eventually be used
+    # to distinguish songs hosted on spotfiy and songs that
+    # were uploaded by a user.
     for index, song in enumerate( playlist[ "songs" ] ):
         if not song_in_db( song[ "uri" ] ):
+            # Add the song into the song table to preserve the integrity of the
+            # relational model
             retrossette_db_intf.execute_query(
                 """
                 INSERT INTO song (song_id, song_name, duration_ms, song_type)
@@ -114,6 +239,8 @@ def add_playlist( user_uri, playlist ):
                 has_return=False
             )
 
+        # Map the song to the playlist to show what songs are in a specified
+        # playlist
         retrossette_db_intf.execute_query(
             """
             INSERT INTO houses (playlist_id, song_id, track_number)
