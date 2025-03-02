@@ -28,8 +28,7 @@ spotify_api_auth_url = 'https://accounts.spotify.com/authorize?'
 spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
 spotify_auth_response_type = 'code'
-#redirect_uri = 'http://retrossette-e7hgd5eadee7bshz.centralus-01.azurewebsites.net/api/return_from_login'
-redirect_uri = 'http://localhost:5000/api/return_from_login'
+redirect_uri = os.getenv( "SERVER_URL" ) + "/return_from_login"
 scope = ' '.join(['user-read-email', 'user-read-private', 'streaming']) # Add more permissions if needed
 show_dialog = 'false' # Determines if user needs to re-authenticate each time
                       # For production should be false. Only true for debugging
