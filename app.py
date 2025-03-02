@@ -45,7 +45,7 @@ Invariants:
 Known Faults
     None
     
-Sources: Flask Documentation, React Documentation
+Sources: Flask Documentation, React Documentation, Socketio Documentation
 '''
 ###############################################################################
 # IMPORTS
