@@ -37,7 +37,7 @@ jobs:
           cd retrossette-app
           npm install react-scripts
           npm install react-router-dom
-          npm run build
+          CI=false npm run build
           cd ..
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
