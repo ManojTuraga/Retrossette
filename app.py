@@ -100,9 +100,6 @@ app.config[ "SESSION_TYPE" ] = "filesystem"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta( hours=24 )
 Session( app )
 
-# Make the app support CORS
-CORS( app )
-
 # Hook the application up with Socketio so thaw we get both flask api
 # calls and socketio api calls.
 socketio = SocketIO( app, 
