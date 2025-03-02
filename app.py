@@ -78,6 +78,8 @@ from modules.api.spotify_api_req_private import UserSpotifyAPIWrapper
 from modules.api.spotify_api_req_public import query_tracks
 from modules.db import retrossette_db_queries
 
+# From the datetime import the time delta function. This code
+# will be used for figuring out when to delete the cache
 from datetime import timedelta
 
 ###############################################################################
@@ -89,11 +91,20 @@ from datetime import timedelta
 app = Flask( __name__, 
              root_path=str( pathlib.Path( "retrossette-app/build" ).resolve() ) )
 
+# Get the secret key from the environment variables
 app.secret_key = os.getenv( "SECRET_KEY" )
+
+# Change the default Cache setting to filesytem and ensure
+# that the cache is reset every 25 hours
 app.config[ "SESSION_TYPE" ] = "filesystem"
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta( hours=24 )
 Session( app )
+
+# Make the app support CORS
 CORS( app )
+
+# Hook the application up with Socketio so thaw we get both flask api
+# calls and socketio api calls.
 socketio = SocketIO( app, 
                      manage_session=False )
 
@@ -103,11 +114,23 @@ socketio = SocketIO( app,
 # Get API token
 @socketio.on( "/api/get_api_token" )
 def api_get_get_api_token( data ):
+    """
+    Function: Get API Token
+
+    Description: This function is an API endpoint to get a user's API Code
+                 from their specific User API Wrapper Object
+    """
     return { "message" : session[ "UserAPIWrapper" ].get_api_token() }
 
 # Search for song
 @socketio.on( "/api/search_for_song" )
 def api_search_for_song( data ):
+    """
+    Function: Search for Song
+
+    Description: This function is the api wrapper to search for a song on
+                 spotify.
+    """
     return dict( query_tracks( data[ "message" ] ) ) 
 
 # Get user profile information
@@ -118,11 +141,23 @@ def test( data ):
 # Get playlists for user
 @socketio.on( "/api/get_playlists" )
 def api_get_playlists( data ):
+    """
+    Function: Get Stored Playlists
+
+    Description: This functions is a database call wrapper that fetches all the
+                 playlists that are currently in the database
+    """
     return { "message" : retrossette_db_queries.get_playlists( session[ "UserURI" ] ) }
 
 # Handle playlist submission
 @socketio.on( "/api/submit_playlist" )
 def api_submit_playlist( data ):
+    """
+    Function: Submit Playlist selection
+
+    Description: This functions is a database call wrapper that parsers the api
+                 request and stores the playlist in the database
+    """
     print( data[ "message" ] )
     retrossette_db_queries.add_playlist( session[ "UserURI" ], data[ "message" ] )
     return { "status" : "success", "post_submit_url" : "/ViewPlaylists" }
@@ -160,6 +195,8 @@ def api_return_from_login():
     if ('error' in request.args.keys()):
         app.logger.error(f'Error: {request.args["error"]}')
     else:
+        # If there is no error, store the user in the database and store
+        # all user related information in cache
         code = request.args['code']
         session[ "UserAPIWrapper" ] = UserSpotifyAPIWrapper( code )
         user_profile = session[ "UserAPIWrapper" ].get_user_profile()
@@ -171,6 +208,8 @@ def api_return_from_login():
         print( session[ "UserAPIWrapper" ].get_user_profile() )
 
     if "ReturnPath" in session.keys():
+        # Redirect back to the inital page if there is something in
+        # cache
         return redirect( session[ "ReturnPath" ] )
     
     else:
