@@ -28,7 +28,7 @@ spotify_api_auth_url = 'https://accounts.spotify.com/authorize?'
 spotify_api_token_url = 'https://accounts.spotify.com/api/token'
 spotify_content_type = 'application/x-www-form-urlencoded'
 spotify_auth_response_type = 'code'
-redirect_uri = os.getenv( "SERVER_URL" ) + "/return_from_login"
+redirect_uri = os.getenv( "SERVER_URL" ) + "/api/return_from_login"
 scope = ' '.join(['user-read-email', 'user-read-private', 'streaming']) # Add more permissions if needed
 show_dialog = 'false' # Determines if user needs to re-authenticate each time
                       # For production should be false. Only true for debugging
