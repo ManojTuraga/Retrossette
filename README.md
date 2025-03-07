@@ -5,6 +5,7 @@ Retrossette is an application that allows users to create playlists with the phy
 Run the following commands<br>
 `pip install -r requirements.txt`<br>
  `cd retrossette-app`<br>
+ `npm install`<br>
  `npm run build`<br>
  `cd ..`<br>
  ## Run Instructions

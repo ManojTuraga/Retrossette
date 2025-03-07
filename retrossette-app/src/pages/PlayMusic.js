@@ -46,7 +46,7 @@ import React, { useEffect, useState } from 'react';
 import SpotifyPlayer from './SpotifyPlayer';
 
 // Import the socket created in the socket component
-import { SOCKET } from './socket';
+import { SOCKET } from '../components/socket';
 
 /*******************************************************************************
 PROCEDURES

@@ -51,7 +51,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 
 // Import the main application from the component library
-import App from './components/App.js';
+import App from './App';
 
 
 // Create a root object that will host the application

@@ -42,7 +42,7 @@ IMPORTS
 import React, { useState } from 'react';
 
 // Import the SOCKET from the socket component
-import { SOCKET } from './socket';
+import { SOCKET } from '../components/socket';
 
 /*******************************************************************************
 PROCEDURES

@@ -43,7 +43,7 @@ IMPORTS
 import React from 'react';
 
 // Import the styling for this section
-import "../css/CassetteSection.css";
+import '../css/CassetteSection.css';
 
 /******************************************************************************
 PROCEDURES

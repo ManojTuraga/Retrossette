@@ -45,12 +45,14 @@ IMPORTS
 import React, { useState, useEffect } from 'react';
 
 // Import the SOCKET that is location in the socket.js component
-import { SOCKET } from './socket.js'
+import { SOCKET } from './components/socket'
 
 // Import the retrossette specific components
-import CreatePlaylist from './CreatePlaylist.js';
-import ViewPlaylists from './ViewPlaylists.js';
-import PlayMusic from './PlayMusic.js';
+import CreatePlaylist from './pages/CreatePlaylist';
+import ViewPlaylists from './pages/ViewPlaylists';
+import PlayMusic from './pages/PlayMusic';
+import HomePage from './pages/HomePage'
+import Layout from './Layout'
 //import Boombox from './Boombox.js';
 
 // Import all the required routing libraries from the react
@@ -113,15 +115,18 @@ function App()
     return (
             <Router>
                 <Routes>
-                    <Route path="/CreatePlaylist" element={ <CreatePlaylist /> }></Route>
-                    <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
-                    <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
+                    <Route element={ <Layout/> }>
+                        <Route path="" element={ <HomePage/> }></Route>
+                        <Route path="/CreatePlaylist" element={ <CreatePlaylist/> }></Route>
+                        <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
+                        <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
+                        </Route>
                 </Routes>
             </Router>
             // <>
             // <Boombox/>
             // </>
-    );
+        );
     }
 
 // Export just the App component

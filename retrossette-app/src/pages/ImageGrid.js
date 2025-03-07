@@ -42,7 +42,7 @@ IMPORTS
 import React from 'react';
 
 // Import the styling for this componenet
-import "../css/ImageGrid.css";
+import '../css/ImageGrid.css';
 
 /*******************************************************************************
 PROCEDURES

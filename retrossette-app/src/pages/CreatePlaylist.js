@@ -48,10 +48,10 @@ import CassetteSection from './CassetteSection';
 import ImageGrid from './ImageGrid';
 
 // Import the styling for this page
-import "../css/CreatePlaylist.css";
+import '../css/CreatePlaylist.css';
 
 // Import the socket io object created in the socket componenet
-import { SOCKET } from './socket';
+import { SOCKET } from '../components/socket';
 
 // Source: https://lovepik.com/image-380224947/vintage-tape-recorder-old-mix-print.html 
 import cassetteImage from '../cassette.jpg';
