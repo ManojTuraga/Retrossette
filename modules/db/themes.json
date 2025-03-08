@@ -1,0 +1,29 @@
+[
+    {
+        "theme_name": "Test Theme",
+        "primary_color_1": "#D2042D",
+        "primary_color_2": "#98FF98",
+        "secondary_color_1": "#FFDA03",
+        "secondary_color_2": "#7DF9FF",
+        "primary_font": "Arial, Helvetica, sans-serif",
+        "secondary_font": "Georgia, serif"
+    },
+    {
+        "theme_name": "Test Theme2",
+        "primary_color_1": "#F88379",
+        "primary_color_2": "#7851A9",
+        "secondary_color_1": "#0F52BA",
+        "secondary_color_2": "#DAA520",
+        "primary_font": "'Courier New', Courier, monospace",
+        "secondary_font": "'Times New Roman', Times, serif"
+    },
+    {
+        "theme_name": "Test Theme3",
+        "primary_color_1": "#008080",
+        "primary_color_2": "#E6E6FA",
+        "secondary_color_1": "#CC5500",
+        "secondary_color_2": "#808000",
+        "primary_font": "Verdana, Geneva, sans-serif",
+        "secondary_font": "'Comic Sans MS', cursive, sans-serif"
+    }
+]

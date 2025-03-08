@@ -159,9 +159,20 @@ def api_submit_playlist( data ):
     retrossette_db_queries.add_playlist( session[ "UserURI" ], data[ "message" ] )
     return { "status" : "success", "post_submit_url" : "/ViewPlaylists" }
 
+# Get every song that is in a playlist
 @socketio.on( "/api/get_songs_from_playlist" )
 def api_get_songs_from_playlist( data ):
     return { "status" : "success", "message" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) }
+
+# Get all the themes that are possible
+@socketio.on( "/api/get_themes" )
+def api_get_themes( data ):
+    return { "status" : "success", "message" : retrossette_db_queries.get_themes() }
+
+# Update the theme that the user selected
+@socketio.on( "/api/update_theme" )
+def api_update_theme( data ):
+    retrossette_db_queries.update_theme( session[ "UserURI" ], data[ "message" ] )
         
 ###############################################################################
 # CLIENT ROUTES
@@ -203,6 +214,8 @@ def api_return_from_login():
                                          user_email=user_profile[ "email" ],
                                          user_profile_image=None )
         print( session[ "UserAPIWrapper" ].get_user_profile() )
+
+        retrossette_db_queries.update_theme( user_profile[ "uri" ], 2 )
 
     if "ReturnPath" in session.keys():
         # Redirect back to the inital page if there is something in

@@ -39,7 +39,9 @@ Known Faults
     
 Sources: Postgresql Documentation, EECS 581 Team 42 Final Project
 '''
-
+###############################################################################
+# IMPORTS
+###############################################################################
 # Import the pathlib and sys libraries inorder to dynamically
 # import the database interface. This is due to python's wacky
 # way of handling import paths. This makes it so that there
@@ -64,6 +66,23 @@ retrossette_db_intf = module_from_spec( retrossette_db_intf_spec )
 # Add the module the system modules and execute the module
 sys.modules[ "retrossette_db_intf" ] = retrossette_db_intf
 retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
+
+###############################################################################
+# PROCEDURES
+###############################################################################
+def get_themes():
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT * from theme; 
+        """, 
+        has_return=True
+    )
+
+    result = [ { "name" : n, "id" : i, "primary_color_1" : pc1, "primary_color_2" : pc2, 
+                "secondary_color_1" : sc1, "secondary_color_2" : sc2, "primary_font" : pf, "secondary_font" : sf  } 
+                for i, n, pc1, pc2, sc1, sc2, pf, sf in result ]
+    
+    return result
 
 def get_playlists( user_uri ):
     """
@@ -165,6 +184,23 @@ def song_in_db( song_id ):
     # Parse only the value that the we need from the return
     return result[ 0 ][ 0 ]
 
+def update_theme( user_uri, theme_id ):
+    """
+    Function: Update User Theme
+
+    Description: This function updates the theme for a particular user
+    """
+    # Since users that are logged in are the only ones that really can
+    # interact with the application, no need to check for users
+    # already existing or not
+    retrossette_db_intf.execute_query(
+            f"""
+            UPDATE customizes SET theme_id=%s WHERE user_uri='{ user_uri }';
+            """,
+            vars=( theme_id, ),
+            has_return=False
+        )
+
 def add_user( user_uri, user_display_name, user_email, user_profile_image=None ):
     """
     Function: Add User to the database
@@ -183,6 +219,17 @@ def add_user( user_uri, user_display_name, user_email, user_profile_image=None )
             VALUES (%s, %s, %s, %s);
             """,
             vars=( user_uri, user_display_name, user_email, user_profile_image ),
+            has_return=False
+        )
+
+        # Along with adding the user, keep track of the theme that they
+        # selected. By default, we will pick the first theme
+        retrossette_db_intf.execute_query(
+            """
+            INSERT INTO "customizes" (user_uri, theme_id)
+            VALUES (%s, %s);
+            """,
+            vars=( user_uri, 1 ),
             has_return=False
         )
 

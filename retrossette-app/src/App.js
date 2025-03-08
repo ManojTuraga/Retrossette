@@ -53,6 +53,7 @@ import ViewPlaylists from './pages/ViewPlaylists';
 import PlayMusic from './pages/PlayMusic';
 import HomePage from './pages/HomePage'
 import Layout from './Layout'
+import TestThemes from './pages/TestThemes';
 //import Boombox from './Boombox.js';
 
 // Import all the required routing libraries from the react
@@ -112,6 +113,9 @@ function App()
     // corresponding URL. Right now the only required componenets
     // are the CreatePlaylist page, the ViewPlaylists page, and the
     // PlayMusic page.
+
+    //NOTE: THE TEST ROUTE SHOULD BE DELETED, THIS IS JUST A PROOF
+    // OF CONCEPT
     return (
             <Router>
                 <Routes>
@@ -120,6 +124,7 @@ function App()
                         <Route path="/CreatePlaylist" element={ <CreatePlaylist/> }></Route>
                         <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
                         <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
+                        <Route path="/TestThemes" element={ <TestThemes/> }></Route>
                         </Route>
                 </Routes>
             </Router>
