@@ -46,6 +46,7 @@ import React, { useState } from 'react';
 // Import the required componenets for this page
 import CassetteSection from './CassetteSection';
 import ImageGrid from './ImageGrid';
+import Slider from '../components/slider';
 
 // Import the styling for this page
 import '../css/CreatePlaylist.css';
@@ -91,6 +92,13 @@ function CreatePlaylist ()
     // Define a state variable to hold the songs that we
     // currently searched for
     const [searchedSongs, setSearchedSongs] = useState([]);
+
+    const [allGenres, setAllGenres] = useState([]);
+
+    SOCKET.emit( "/api/get_all_genres", { }, ( response ) =>
+        {
+        setAllGenres( response[ "message" ] );  
+        } )
 
     // Define a local function to handle changes to the input
     // in the search bar
@@ -186,6 +194,7 @@ function CreatePlaylist ()
             <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
             <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button> <br></br>
             <img src={cassetteImage} alt="Cassette" className="cassette-image" />
+            <Slider allGenres={allGenres}/>
             </div>
             <div>
             <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>

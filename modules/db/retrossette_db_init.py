@@ -97,6 +97,30 @@ def _init_themes():
             has_return=False
         )
 
+def _init_genres():
+    """
+    Function: Initialize Genres
+
+    Description: This function is responsible for initializing the genres that could
+                 be associated with a playlist
+    """
+    # Load the genres as a json from the file
+    genre_file = open( pathlib.Path( __file__ ).parent / "genres.json" )
+    genres = json.load( genre_file )
+    genre_file.close()
+
+    # Add every genre into the genre table
+    for genre in genres:
+        retrossette_db_intf.execute_query(
+            """
+            INSERT INTO "genre" (genre_name, genre_description)
+            VALUES (%s, %s);
+            """,
+            vars=( genre[ "genre_name" ], genre[ "genre_description" ] ),
+            has_return=False
+        )
+
+
 def init_db():
     """
     Function: Initialize the Database
@@ -167,8 +191,9 @@ def init_db():
         """
         CREATE TABLE IF NOT EXISTS "genre"
             (
-            genre_id INT PRIMARY KEY,
-            genre_type TEXT NOT NULL
+            genre_id SERIAL PRIMARY KEY,
+            genre_name TEXT NOT NULL,
+            genre_description TEXT NOT NULL
             );
         """,
         has_return=False
@@ -239,6 +264,7 @@ def init_db():
             (
             playlist_id INT NOT NULL,
             genre_id INT NOT NULL,
+            association INTEGER CHECK (association BETWEEN 0 AND 100),
             FOREIGN KEY (playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE,
             FOREIGN KEY (genre_id) REFERENCES genre(genre_id) ON DELETE CASCADE
             );
@@ -248,6 +274,9 @@ def init_db():
     # Once all the tables are initialized, call the function to add all
     # the themes into the database
     _init_themes()
+
+    # Also add all the genres from the file into the database
+    _init_genres()
 
 def delete_all_tables():
     """

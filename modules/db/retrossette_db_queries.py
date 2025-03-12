@@ -70,6 +70,19 @@ retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 ###############################################################################
 # PROCEDURES
 ###############################################################################
+def get_genres():
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT * from genre; 
+        """, 
+        has_return=True
+    )
+
+    result = [ { "name" : n, "id" : i, "description" : des } for i, n, des in result ]
+    
+    return result
+
+
 def get_themes():
     result = retrossette_db_intf.execute_query(
         """

@@ -54,7 +54,6 @@ Sources: Flask Documentation, React Documentation, Socketio Documentation
 # Run the init module before starting the application.
 # This will populate all environment variables
 import init
-import json
 
 # Import the pathlib library to elegantly handle filepaths
 import pathlib
@@ -168,6 +167,11 @@ def api_get_songs_from_playlist( data ):
 @socketio.on( "/api/get_themes" )
 def api_get_themes( data ):
     return { "status" : "success", "message" : retrossette_db_queries.get_themes() }
+
+# Get all the genres that are supported
+@socketio.on( "/api/get_all_genres" )
+def api_get_all_genres( data ):
+    return { "status" : "success", "message" : retrossette_db_queries.get_genres() }
 
 # Update the theme that the user selected
 @socketio.on( "/api/update_theme" )
