@@ -71,6 +71,14 @@ retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 # PROCEDURES
 ###############################################################################
 def get_genres():
+    """
+    Function: Get Genres from Database
+
+    Description: This function queries the database for all the genres that
+                 are configured in the database. All of the genres are sourced
+                 from the genres.json file
+    """
+    # Get all the information regarding genres from the genre table
     result = retrossette_db_intf.execute_query(
         """
         SELECT * from genre; 
@@ -78,12 +86,23 @@ def get_genres():
         has_return=True
     )
 
+    # Convert the result from a list of tuples into a list of
+    # of dictionaries. This is because we will be return
+    # the result of this function
     result = [ { "name" : n, "id" : i, "description" : des } for i, n, des in result ]
     
     return result
 
 
 def get_themes():
+    """
+    Function: Get Themes from Database
+
+    Description: This function queries the database for all the themes that
+                 are configured in the database. All of the themes are sourced
+                 from the themes.json file
+    """
+    # Get all the information regarding themes from the theme table
     result = retrossette_db_intf.execute_query(
         """
         SELECT * from theme; 
@@ -91,6 +110,9 @@ def get_themes():
         has_return=True
     )
 
+    # Convert the result from a list of tuples into a list of
+    # of dictionaries. This is because we will be return
+    # the result of this function
     result = [ { "name" : n, "id" : i, "primary_color_1" : pc1, "primary_color_2" : pc2, 
                 "secondary_color_1" : sc1, "secondary_color_2" : sc2, "primary_font" : pf, "secondary_font" : sf  } 
                 for i, n, pc1, pc2, sc1, sc2, pf, sf in result ]
@@ -310,7 +332,14 @@ def add_playlist( user_uri, playlist ):
             has_return=False
         )
 
+    # Every playlist is required to be associated with at least
+    # one genre. The sum of all genres should be equal to 100,
+    # indicating the association that each playlist has with
+    # a genre
     for genre, association in playlist[ "genres" ]:
+        # The response actually associates a playlist
+        # with its genre name instead of ID, so first
+        # fetch the ID
         genre_id = retrossette_db_intf.execute_query(
             """
             SELECT genre_id from genre where genre_name=%s;
@@ -319,6 +348,8 @@ def add_playlist( user_uri, playlist ):
             has_return=True
         )[ 0 ][ 0 ]
 
+        # Associate the playlist with the genre id using the
+        # association from the response
         retrossette_db_intf.execute_query(
             """
             INSERT INTO groups (playlist_id, genre_id, association)
