@@ -57,6 +57,8 @@ import { SOCKET } from '../components/socket';
 // Source: https://lovepik.com/image-380224947/vintage-tape-recorder-old-mix-print.html 
 import cassetteImage from '../cassette.jpg';
 
+import {zip} from 'lodash'
+
 /*******************************************************************************
 VARIABLES
 *******************************************************************************/
@@ -95,6 +97,10 @@ function CreatePlaylist ()
 
     const [allGenres, setAllGenres] = useState([]);
 
+    const [genreAssociationValues, setGenreAssociationValues] = useState([]);
+
+    const [genreDropdownValues, setGenreDropdownValues] = useState([]);
+
     SOCKET.emit( "/api/get_all_genres", { }, ( response ) =>
         {
         setAllGenres( response[ "message" ] );  
@@ -123,7 +129,7 @@ function CreatePlaylist ()
 
         // Send the playlist information to the server and on a response, redirect
         // to the specified page
-        SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs } }, ( response ) =>
+        SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs, genres: zip( genreDropdownValues, genreAssociationValues ) } }, ( response ) =>
             {
             window.location.href = response[ "post_submit_url" ];    
             } )
@@ -192,9 +198,10 @@ function CreatePlaylist ()
         <div className='current_cassette'>
             <div>Cassette Picture/Picture Selection<br></br>
             <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
-            <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 )} onClick={ sendPlaylist }> Submit</button> <br></br>
+            <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 ) || 
+                ( genreDropdownValues.length === 0 ) || genreAssociationValues.reduce((acc, curr) => acc + Number(curr), 0) !== 100 } onClick={ sendPlaylist }> Submit</button> <br></br>
             <img src={cassetteImage} alt="Cassette" className="cassette-image" />
-            <Slider allGenres={allGenres}/>
+            <Slider allGenres={allGenres} values={ genreAssociationValues } setValues={setGenreAssociationValues} dropdownValues={genreDropdownValues} setDropdownValues={setGenreDropdownValues}/>
             </div>
             <div>
             <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>

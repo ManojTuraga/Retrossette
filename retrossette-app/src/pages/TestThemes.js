@@ -1,6 +1,6 @@
 // From the react library import the React framework
 // and the useEffect and useState functions
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 // Import the socket created in the socket component
 import { SOCKET } from '../components/socket';

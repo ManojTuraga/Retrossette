@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 
-const Slider = ({ allGenres }) => {
-  const [values, setValues] = useState([]);
-  const [dropdownValues, setDropdownValues] = useState([]);
-
+const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValues }) => {
   const handleChange = (index, event) => {
     const newValues = [...values];
     newValues[index] = event.target.value;
@@ -22,9 +19,19 @@ const Slider = ({ allGenres }) => {
   };
 
   const addGenre = () => {
-    setValues([...values, 0]);
-    setDropdownValues([...dropdownValues, '']);
+    if (values.length < allGenres.length) {
+      setValues([...values, 0]);
+      for( let i = 0; i < allGenres.length; i++ )
+        {
+        if( !(dropdownValues.includes( allGenres[ i ].name ) ) )
+          {
+          setDropdownValues([...dropdownValues, allGenres[ i ].name]);
+          break;
+          }
+        }
+    }
   };
+  
 
   const handleDelete = (index) => {
     const newValues = values.filter((_, i) => i !== index);
@@ -39,25 +46,25 @@ const Slider = ({ allGenres }) => {
       .filter((name) => !dropdownValues.includes(name) || dropdownValues[index] === name);
   };
 
-  const containerHeight = `${values.length * 3}rem`; // Adjust height based on number of sliders
+  const containerHeight = `${values.length * 3}rem`;
 
   return (
     <div className="flex flex-col justify-center items-center bg-gray-100">
       <button type="submit" onClick={addGenre}>Add</button>
       <div className="text-center mt-2">{values.join(' - ')}</div>
-      <div className={`w-1/3 relative mt-4`} style={{ height: containerHeight }}> {/* Adjusted width from 1/2 to 1/3 */}
+      <div className={`w-1/3 relative mt-4`} style={{ height: containerHeight }}>
         {values.map((value, index) => (
           <div key={index} className="flex items-center mb-2" style={{ top: `${index * 2}rem`, transform: 'translateY(-50%)' }}>
             <select
-              value={dropdownValues[index] || ''}
-              onChange={(event) => handleSelectChange(index, event)}
-              className="mr-2"
-            >
-              <option value="">Select an genre</option>
-              {getDropdownOptions(index).map((option, idx) => (
-                <option key={idx} value={option}>{option}</option>
-              ))}
-            </select>
+                value={dropdownValues[index]}
+                onChange={(event) => handleSelectChange(index, event)}
+                className="mr-2"
+              >
+                {getDropdownOptions(index).map((option, idx) => (
+                  <option key={idx} value={option}>{option}</option>
+                ))}
+              </select>
+
             <input
               type="range"
               min="0"

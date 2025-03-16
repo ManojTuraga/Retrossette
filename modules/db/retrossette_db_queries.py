@@ -309,3 +309,21 @@ def add_playlist( user_uri, playlist ):
             vars=( result[ 0 ][ 0 ], song[ "uri" ], index ),
             has_return=False
         )
+
+    for genre, association in playlist[ "genres" ]:
+        genre_id = retrossette_db_intf.execute_query(
+            """
+            SELECT genre_id from genre where genre_name=%s;
+            """,
+            vars=( genre, ),
+            has_return=True
+        )[ 0 ][ 0 ]
+
+        retrossette_db_intf.execute_query(
+            """
+            INSERT INTO groups (playlist_id, genre_id, association)
+            VALUES (%s, %s, %s)
+            """,
+            vars=( result[ 0 ][ 0 ], genre_id, association ),
+            has_return=False
+        )
