@@ -48,7 +48,7 @@ import logo from '../images/layout/blank_avatar.png';
 PROCEDURES
 ******************************************************************************/
 /* This function defines the rendering behavior of the navbar */
-export default function Navbar()
+export default function Navbar({ ProfileName, ProfileImage })
     {
         // The following variable is not being used yet
         // This will be used when we are doing differnet
@@ -69,9 +69,13 @@ export default function Navbar()
                 </div>
 
                 <div className="flex flex-row-reverse flex-1 min-h-100 items-center">
-                    <div className="text-white px-5">John Smith</div>
-                    <img class="w-9 h-9 rounded-full" src={logo} alt="Rounded avatar"></img>
+                    <div className="text-white px-5">{ ProfileName }</div>
+                    <img class="w-9 h-9 rounded-full" src={ProfileImage} alt="Rounded avatar"></img>
                 </div>
             </nav>
         );
     }
+
+Navbar.defaultProps = {
+    ProfileImage: logo,
+      };

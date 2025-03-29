@@ -70,6 +70,17 @@ retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 ###############################################################################
 # PROCEDURES
 ###############################################################################
+def get_user_profile_information( user_uri ):
+    result = retrossette_db_intf.execute_query(
+        f"""
+        SELECT user_display_name, user_profile_image from "user" where user_uri='{ user_uri }'; 
+        """, 
+        has_return=True
+    )
+
+    return { "profile_name" : result[ 0 ][ 0 ], "profile_image" : result[ 0 ][ 1 ] }
+
+
 def get_genres():
     """
     Function: Get Genres from Database

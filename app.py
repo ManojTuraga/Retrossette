@@ -130,9 +130,9 @@ def api_search_for_song( data ):
     return dict( query_tracks( data[ "message" ] ) ) 
 
 # Get user profile information
-@socketio.on( "Test" )
-def test( data ):
-    return { "status" : "success" }
+@socketio.on( "/api/get_profile_information" )
+def api_get_profile_information( data ):
+    return { "message" : retrossette_db_queries.get_user_profile_information( session[ "UserURI" ] ) }
 
 # Get playlists for user
 @socketio.on( "/api/get_playlists" )
@@ -220,12 +220,18 @@ def api_return_from_login():
         session[ "UserAPIWrapper" ] = UserSpotifyAPIWrapper( code )
         user_profile = session[ "UserAPIWrapper" ].get_user_profile()
         session[ "UserURI" ] = user_profile[ "uri" ]
+        
+        if len( user_profile[ "images" ] ) > 0:
+            image = user_profile[ "images" ][ 0 ][ "url" ]
+
+        else:
+            image = None 
+
         retrossette_db_queries.add_user( user_uri=user_profile[ "uri" ], 
                                          user_display_name=user_profile[ "display_name" ],
                                          user_email=user_profile[ "email" ],
-                                         user_profile_image=None )
-        print( session[ "UserAPIWrapper" ].get_user_profile() )
-
+                                         user_profile_image=image )
+        
         retrossette_db_queries.update_theme( user_profile[ "uri" ], 2 )
 
     if "ReturnPath" in session.keys():

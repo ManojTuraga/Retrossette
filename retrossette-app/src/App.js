@@ -71,6 +71,8 @@ function App()
     {
     // Define a state variable for socket connection state
     const [ isConnected, setIsConnected ] = useState( SOCKET.connected );
+    const [ profileName, setProfileName ] = useState( '' );
+    const [ profileImage, setProfileImage ] = useState( '' );
 
     // This is a local function that updates the
     // local storage when a playlist is selected
@@ -107,6 +109,12 @@ function App()
             SOCKET.off( 'disconnect', onDisconnected );
             }
         } )
+
+    SOCKET.emit( "/api/get_profile_information", {}, ( response ) =>
+        {
+        setProfileName( response[ "message" ][ "profile_name" ] );
+        setProfileImage( response[ "message" ][ "profile_image" ] );
+        } )
     
     // Render the page to route each required componenet to it's
     // corresponding URL. Right now the only required componenets
@@ -118,7 +126,7 @@ function App()
     return (
             <Router>
                 <Routes>
-                    <Route element={ <Layout/> }>
+                    <Route element={ <Layout profileName={ profileName } profileImage={ profileImage } /> }>
                         <Route path="" element={ <HomePage/> }></Route>
                         <Route path="/CreatePlaylist" element={ <CreatePlaylist/> }></Route>
                         <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>

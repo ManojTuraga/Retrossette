@@ -44,23 +44,38 @@ import Navbar from './components/navbar'
 // Import the Outlet component from the react router dom
 import { Outlet } from 'react-router-dom'
 
+import { SOCKET } from './components/socket';
+import React, { useState } from 'react';
+
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
 
 /* This function is responsible for initializing the layout
     of the entire application */
-function Layout()
+function Layout( { profileName, profileImage } )
     {
-        // Render the required componenets for this page
+    // Render the required componenets for this page
+    if( profileImage != null )
+        {
         return (
-            <>
-                <Navbar/>
+            <>  
+                <Navbar ProfileName={ profileName } ProfileImage={profileImage}/>
                 <main>
                     <Outlet/>
                 </main>
             </>
         )
+        }
+    else
+        {
+        <>  
+            <Navbar ProfileName={ profileName }/>
+            <main>
+                <Outlet/>
+            </main>
+        </>
+        }
         
     }
 
