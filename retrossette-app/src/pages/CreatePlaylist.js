@@ -140,28 +140,29 @@ function CreatePlaylist ()
     // music on spotify
     function sendSearchQuery( e )
         {
-        // Prevent the default behavior when a button is clicked
-        e.preventDefault();
 
-        // Send the search query to the server and on the
-        // response, add all the songs to the image grid
-        SOCKET.emit( "/api/search_for_song", { message: searchInput.trim() }, ( response ) => 
-            { 
-            let newElements = [];
-            for( let song of response[ "items" ] ) 
-                {
-                newElements.push(
+        if( e.key == "Enter" )
+            {
+            // Send the search query to the server and on the
+            // response, add all the songs to the image grid
+            SOCKET.emit( "/api/search_for_song", { message: searchInput.trim() }, ( response ) => 
+                { 
+                let newElements = [];
+                for( let song of response[ "items" ] ) 
                     {
-                    name: song[ "name" ],
-                    uri: song[ "uri" ],
-                    duration_ms: song[ "duration_ms" ],
-                    image: song[ "album" ][ "images" ][ 0 ][ "url" ],
-                    artists: song[ "artists" ].map( s => s[ "name" ] ),
-                    song_type: 0
-                    });
-                }
-                setSearchedSongs(newElements);
-            } );
+                    newElements.push(
+                        {
+                        name: song[ "name" ],
+                        uri: song[ "uri" ],
+                        duration_ms: song[ "duration_ms" ],
+                        image: song[ "album" ][ "images" ][ 0 ][ "url" ],
+                        artists: song[ "artists" ].map( s => s[ "name" ] ),
+                        song_type: 0
+                        });
+                    }
+                    setSearchedSongs(newElements);
+                } );
+            }
         }
     
     // Local function to update the total duration of all the songs
@@ -256,15 +257,18 @@ function CreatePlaylist ()
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
                                 bg-cyan-500 rounded-b-lg h-full overflow-y-auto scrollbar-hide p-4">
                     <div className="col-span-full text-white text-2xl">Songs</div>
-                    
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+
+                    { currSelectedSongs.map((song, index) => (
+                        <div className="h-auto bg-pink-500 text-white aspect-square">
+                        <img
+                        key={ index }
+                        src={ song[ "image" ] }
+                        alt={ `${song[ "name" ]} by ${song[ "artists" ]}` }
+                        title={ `${song[ "name" ]} by ${song[ "artists" ]}` }
+                        onClick={() => updateFromCurrSelectedSongs(song, index) }
+                        />
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -281,24 +285,28 @@ function CreatePlaylist ()
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
-
                                 <input
                                 className="ps-2 peer h-full w-full outline-none text-sm text-white pr-2 bg-[#3b3b3b]"
                                 type="text"
                                 id="search"
+                                value={searchInput} 
+                                onChange={ handleSearchBarChange }
+                                onKeyDown={ sendSearchQuery }
                                 placeholder="Search something.." /> 
                             </div>
                         </div>
                     </div>
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div>
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
-                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div>     
+                    { searchedSongs.map((song, index) => (
+                        <div className="h-auto bg-cyan-500 text-white aspect-square">
+                        <img
+                        key={ index }
+                        src={ song[ "image" ] }
+                        alt={ `${song[ "name" ]} by ${song[ "artists" ]}` }
+                        title={ `${song[ "name" ]} by ${song[ "artists" ]}` }
+                        onClick={() => updateFromSearchedSongs(song, index) }
+                        />
+                        </div>
+                    ))}
                 </div>
             </div>
 
