@@ -220,48 +220,85 @@ function CreatePlaylist ()
             <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs} isTrackSelection={false}/>
         </div>
         </div>*/
-        <div className="grid grid-cols-2 gap-4">
-            <div className="grid grid-rows-6 justify-between items-center bg-cyan-500 max-h-[75vh] pt-[65px] rounded-b-lg">
-                <div className="place-self-center text-center text-white text-2xl row-span-1">Cassette Name</div>
-                <div>
-                    <img src={cassette} alt="" className="place-self-center row-span-4"/>
-                </div> 
-            </div>
-            <div className="bg-cyan-500 pt-[65px] rounded-b-lg p-4 max-h-[75vh]">
-                <div className="place-self-center text-center text-white text-2xl col-span-4">Songs</div>
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    1
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    2
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    3
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    4
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    5
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    6
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    7
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    8
-                    </div>
-                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
-                    9
-                    </div>
+        <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-65px)]">
+            <div className="col-start-1 col-span-2 row-start-1 row-span-3 ">
+                <div className="grid grid-cols-1 content-start gap-4 bg-cyan-500 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
+                    <div className="col-span-full place-self-center text-white text-2xl">Cassette Name</div>
+                    <img src={cassette} alt="" className="w-full h-auto col-span-full place-self-center col-span-1"/>
                 </div>
             </div>
-            <div className="col-span-2 bg-rose-500">
-                <div className="grid grid-cols-6 gap-3">
+            
+            <div className="col-start-1 col-span-2 row-start-4 row-span-2">
+                <div className="grid sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 content-start gap-4 
+                                bg-pink-700 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
+                    <div className="grid grid-cols-5 col-span-full">
+                        <div className="col-span-4">
+                            <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-[#2b2b2b] overflow-hidden">
+                                <div className="grid place-items-center h-full w-12 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+
+                                <input
+                                className="ps-2 peer h-full w-full outline-none text-sm text-white pr-2 bg-[#3b3b3b]"
+                                type="text"
+                                id="search"
+                                placeholder="Genres" /> 
+                            </div>
+                        </div>
+                        <div className="my-auto mx-auto col-span-1 text-white text-2xl"></div>  
+                    </div>  
+                </div>
+            </div>
+
+            <div className="col-start-3 col-span-3 row-start-1 row-span-2">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
+                                bg-cyan-500 rounded-b-lg h-full overflow-y-auto scrollbar-hide p-4">
+                    <div className="col-span-full text-white text-2xl">Songs</div>
                     
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-pink-500 text-white aspect-square"></div>
+                </div>
+            </div>
+
+            
+
+            <div className="col-start-3 col-span-3 row-start-3 row-span-3">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
+                            bg-pink-700 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
+                    <div className="grid grid-cols-5 col-span-full">
+                        <div className="col-span-2">
+                            <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-[#2b2b2b] overflow-hidden">
+                                <div className="grid place-items-center h-full w-12 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+
+                                <input
+                                className="ps-2 peer h-full w-full outline-none text-sm text-white pr-2 bg-[#3b3b3b]"
+                                type="text"
+                                id="search"
+                                placeholder="Search something.." /> 
+                            </div>
+                        </div>
+                    </div>
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div>
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div> 
+                    <div className="h-auto bg-cyan-500 text-white aspect-square"></div>     
                 </div>
             </div>
 

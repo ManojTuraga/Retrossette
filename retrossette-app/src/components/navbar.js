@@ -57,7 +57,7 @@ export default function Navbar({ ProfileName, ProfileImage })
 
         // Define the rendering the rendering behavior of this component
         return (
-            <nav className="min-h-[65px] flex flex-row justify-center items-center items-stretch bg-[#3b3b3b] px-4 fixed w-full z-20 top-0 start-0 rounded-b-lg shadow-lg">
+            <nav className="min-h-[65px] flex flex-row justify-center items-center items-stretch bg-[#3b3b3b] px-4 sticky w-full z-20 top-0 start-0 rounded-b-lg shadow-lg">
                 <div className="flex min-h-100 flex-1 items-center">
                     <Link to="" className="text-center text-white hover:text-[#e05ccd] px-5">Home</Link>
                     <Link to="/CreatePlaylist" className="text-center text-white hover:text-[#e05ccd] px-5">Create</Link>
