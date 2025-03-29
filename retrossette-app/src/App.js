@@ -76,8 +76,7 @@ function App()
     // local storage when a playlist is selected
     function handlePlaylistSelected( id )
         {
-        localStorage.setItem( 'playlist_id', id );
-        window.location.href = "/PlayMusic";
+        window.location.href = `/PlayMusic?id=${id}`;
         }
 
     // The is the side effect behavior for this component.

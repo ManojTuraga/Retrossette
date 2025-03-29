@@ -42,11 +42,15 @@ IMPORTS
 // and the useEffect and useState functions
 import React, { useEffect, useState } from 'react';
 
+import { useSearchParams } from 'react-router-dom'
+
 // Import the Spotify Web Player
 import SpotifyPlayer from './SpotifyPlayer';
 
 // Import the socket created in the socket component
 import { SOCKET } from '../components/socket';
+
+import ReviewForm from '../components/ratings';
 
 /*******************************************************************************
 PROCEDURES
@@ -62,13 +66,33 @@ function PlayMusic() {
     // Create a state variable to hold the user's API token
     const [authToken, setAuthToken] = useState('');
 
+    const [rating, setRating] = useState( 0 );
+    const [comment, setComment] = useState( "" );
+    const [searchParams] = useSearchParams();
+
+    let playlistID = searchParams.get( 'id' );
+
+    function handleReviewSubmit( rating, comment )
+        {
+        SOCKET.emit( "/api/update_rating_for_playlist", { message: { stars: rating, comment: comment, playlist_id: playlistID } }, (response) => {} )
+        }
+
     // Define the side effect for this component
     useEffect(() => {
-            let playlistID = Number(localStorage.getItem('playlist_id')) || 0;
-
             /// Get the Songs that we need to play for this playlist
             SOCKET.emit("/api/get_songs_from_playlist", { message: playlistID }, (response) => {
-                setListOfSongs(response["message"]);
+                console.log( response );
+                setListOfSongs(response["message"][ "songs" ]);
+            
+               if( "stars" in response[ "message" ] )
+                    {
+                    setRating( response[ "message" ][ "stars" ] )
+                    } 
+
+                if( "comment" in response[ "message" ] )
+                    {
+                    setComment( response[ "message" ][ "comment" ] )
+                    } 
             });
     
             // Get the API token for the user
@@ -81,6 +105,14 @@ function PlayMusic() {
     return (
         <>
         { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
+        <h1>Song Review</h1>
+            <ReviewForm
+                rating={rating}
+                setRating={setRating}
+                comment={comment}
+                setComment={setComment}
+                onSubmit={handleReviewSubmit}
+            />
         </>
     );
 }

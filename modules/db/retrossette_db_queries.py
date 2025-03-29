@@ -93,6 +93,20 @@ def get_genres():
     
     return result
 
+def get_rating( user_uri, playlist_id ):
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT rates_stars, rates_comment from rates where user_uri=%s AND playlist_id=%s; 
+        """, 
+        vars=( user_uri, playlist_id ),
+        has_return=True
+    )
+
+    if len( result ) > 0:
+        return { "stars" : result[ 0 ][ 0 ], "comment" : result[ 0 ][ 1 ] }
+    
+    return {}
+
 
 def get_themes():
     """
@@ -218,6 +232,33 @@ def song_in_db( song_id ):
 
     # Parse only the value that the we need from the return
     return result[ 0 ][ 0 ]
+
+def update_rating( user_uri, playlist_id, stars, comment ):
+    result = retrossette_db_intf.execute_query(
+                f"""
+                SELECT 1 FROM rates WHERE user_uri='{ user_uri }' AND playlist_id=%s;
+                """,
+                vars=( playlist_id, ),
+                has_return=True
+            )
+ 
+    if len( result ) > 0:
+        retrossette_db_intf.execute_query(
+                f"""
+                UPDATE rates SET rates_stars=%s, rates_comment=%s WHERE user_uri='{ user_uri }' AND playlist_id=%s;
+                """,
+                vars=( stars, comment, playlist_id ),
+                has_return=False
+            )
+        
+    else:
+        retrossette_db_intf.execute_query(
+                """
+                INSERT INTO rates (user_uri, playlist_id, rates_stars, rates_comment) VALUES (%s, %s, %s, %s);
+                """,
+                vars=( user_uri, playlist_id, stars, comment ),
+                has_return=False
+            )
 
 def update_theme( user_uri, theme_id ):
     """

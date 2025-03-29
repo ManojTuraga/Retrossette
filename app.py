@@ -161,7 +161,14 @@ def api_submit_playlist( data ):
 # Get every song that is in a playlist
 @socketio.on( "/api/get_songs_from_playlist" )
 def api_get_songs_from_playlist( data ):
-    return { "status" : "success", "message" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) }
+    print( { "status" : "success", 
+                "message" : { "songs" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) } | ( retrossette_db_queries.get_rating( session[ "UserURI" ], data[ "message" ] ) ) } )
+    return { "status" : "success", 
+                "message" : { "songs" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) } | ( retrossette_db_queries.get_rating( session[ "UserURI" ], data[ "message" ] ) ) }
+
+@socketio.on( "/api/update_rating_for_playlist" )
+def api_update_rating_for_playlist( data ):
+    retrossette_db_queries.update_rating( session[ "UserURI" ], data[ "message" ][ "playlist_id" ], data[ "message" ][ "stars" ], data[ "message" ][ "comment" ] )
 
 # Get all the themes that are possible
 @socketio.on( "/api/get_themes" )
@@ -224,7 +231,7 @@ def api_return_from_login():
     if "ReturnPath" in session.keys():
         # Redirect back to the inital page if there is something in
         # cache
-        return redirect( session[ "ReturnPath" ] )
+        return redirect( session.pop( "ReturnPath" ) )
     
     else:
         # Redirect back to home
@@ -242,15 +249,15 @@ def index( path ):
                  in react, we will only return a file if it exists. Otherwise
                  we defer to the routing specified in the react app
     """
+    if "UserAPIWrapper" not in session.keys():
+        session[ "ReturnPath" ] = path
+        return redirect( user_auth.request_spotify_user_authentication() )
+
     # If the path is not the empty string and there is a real
     # file for said path, return the file
     if path != "" and pathlib.Path( path ).exists():
         return send_from_directory( app.root_path, 
                                     path )
-    
-    if ( path is not None and path != "/" and path.strip() != '') and "UserAPIWrapper" not in session.keys():
-        print( path )
-        return redirect( user_auth.request_spotify_user_authentication() )
 
     # If the path does not physically exist, let react handle
     # that path by returning the base file

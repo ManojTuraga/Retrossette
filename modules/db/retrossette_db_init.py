@@ -227,6 +227,22 @@ def init_db():
         has_return=False
     )
 
+    # Create the rates relationship table
+    retrossette_db_intf.execute_query(
+        """
+        CREATE TABLE IF NOT EXISTS "rates"
+            (
+            user_uri TEXT NOT NULL,
+            playlist_id INT NOT NULL,
+            rates_stars INT CHECK (rates_stars BETWEEN 0 AND 5),
+            rates_comment TEXT,
+            FOREIGN KEY (user_uri) REFERENCES "user"(user_uri) ON DELETE CASCADE,
+            FOREIGN KEY (playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE
+            );
+        """,
+        has_return=False
+    )
+
     # Create the listens_to relationship table
     retrossette_db_intf.execute_query(
         """
@@ -287,7 +303,7 @@ def delete_all_tables():
     """
     # If a connection can be succesfully opened, for table in the table
     # remove it
-    for table in [ "owns", "listens_to", "houses", "groups", "user", "song", "playlist", "genre", "theme", "customizes" ]:
+    for table in [ "owns", "listens_to", "houses", "groups", "user", "song", "playlist", "genre", "theme", "customizes", "rates" ]:
         retrossette_db_intf.execute_query(
                 f"""
                 DROP TABLE IF EXISTS "{table}" CASCADE;
