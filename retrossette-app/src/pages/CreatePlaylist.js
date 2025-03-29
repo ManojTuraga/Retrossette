@@ -58,6 +58,7 @@ import { SOCKET } from '../components/socket';
 import cassetteImage from '../cassette.jpg';
 
 import {zip} from 'lodash'
+import cassette from '../images/cassette_svg.svg'
 
 /*******************************************************************************
 VARIABLES
@@ -194,7 +195,7 @@ function CreatePlaylist ()
     
     // Render the components that are required for this page
     return (
-        <div className='app'>
+        /*<div className='app'>
         <div className='current_cassette'>
             <div>Cassette Picture/Picture Selection<br></br>
             <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
@@ -218,6 +219,52 @@ function CreatePlaylist ()
         <div className='song_selection'>
             <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs} isTrackSelection={false}/>
         </div>
+        </div>*/
+        <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-rows-6 justify-between items-center bg-cyan-500 max-h-[75vh] pt-[65px] rounded-b-lg">
+                <div className="place-self-center text-center text-white text-2xl row-span-1">Cassette Name</div>
+                <div>
+                    <img src={cassette} alt="" className="place-self-center row-span-4"/>
+                </div> 
+            </div>
+            <div className="bg-cyan-500 pt-[65px] rounded-b-lg p-4 max-h-[75vh]">
+                <div className="place-self-center text-center text-white text-2xl col-span-4">Songs</div>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    1
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    2
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    3
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    4
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    5
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    6
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    7
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    8
+                    </div>
+                    <div class="bg-pink-500 text-white flex items-center justify-center h-0 pb-[100%]">
+                    9
+                    </div>
+                </div>
+            </div>
+            <div className="col-span-2 bg-rose-500">
+                <div className="grid grid-cols-6 gap-3">
+                    
+                </div>
+            </div>
+
         </div>
     );
 };

@@ -8,6 +8,11 @@ creators of tailwind css at https://tailwindcss.com/
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+
+html {
+  background-color: #2F2F2F;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
