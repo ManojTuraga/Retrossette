@@ -117,17 +117,19 @@ function PlayMusic() {
             )
             }
     return (
-        <>
-        { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
-        <h1>Song Review</h1>
-            <ReviewForm
-                rating={rating}
-                setRating={setRating}
-                comment={comment}
-                setComment={setComment}
-                onSubmit={handleReviewSubmit}
-            />
-        </>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+	    { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
+	    <div>
+		<h1>Song Review</h1>
+		<ReviewForm
+		    rating={rating}
+		    setRating={setRating}
+		    comment={comment}
+		    setComment={setComment}
+		    onSubmit={handleReviewSubmit}
+		/>
+	    </div>
+	</div>
     );
 }
 

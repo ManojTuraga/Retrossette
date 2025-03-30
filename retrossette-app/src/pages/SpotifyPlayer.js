@@ -144,18 +144,18 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
 
     if (!is_active) {
         return (
-            <>
+            <div>
                 <div className="container">
                     <div className="main-wrapper">
                         <b> Instance not active. Transfer your playback using your Spotify app </b>
                     </div>
                 </div>
-            </>
+            </div>
         );
     } else {
         return (
-          <div className="container">
-              <div className="main-wrapper">
+            <div className="container">
+		<div className="main-wrapper" style={{width: '841px', height: '595px'}}>
 		  
                   <img src={require("../boombox_assets/player.png")}
 		       style={{position: 'absolute', top: '0px', left: '0px', zIndex: '2'}}
