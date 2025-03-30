@@ -76,28 +76,6 @@ const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValue
     setDropdownValues(newDropdownValues);
   };
 
-  // This function handles the behavior of adding
-  // a new slider for a genre
-  const addGenre = () => {
-    // Essentially, only add up to the total number of
-    // genres that are supported
-    if (values.length < allGenres.length) {
-      // Add a new association to the list
-      setValues([...values, 0]);
-
-      // The following for loop is to ensure that
-      // the new dropdown takes on a value that
-      // corresponds to the first available value
-      for( let i = 0; i < allGenres.length; i++ )
-        {
-        if( !(dropdownValues.includes( allGenres[ i ].name ) ) )
-          {
-          setDropdownValues([...dropdownValues, allGenres[ i ].name]);
-          break;
-          }
-        }
-    }
-  };
 
   // This is a local function to handle when a slider is deleted
   const handleDelete = (index) => {
@@ -123,9 +101,8 @@ const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValue
 
   // Define the rendering behavior for this component
   return (
-    <div className="flex flex-col justify-center items-center bg-gray-100">
-      <button type="submit" onClick={addGenre}>Add</button>
-      <div className="text-center mt-2">{values.join(' - ')}</div>
+    <div className="flex flex-col justify-center items-center bg-pink-700">
+      <div className="text-center mt-2 text-white">{values.join(' - ')}</div>
       <div className={`w-1/3 relative mt-4`} style={{ height: containerHeight }}>
         {values.map((value, index) => (
           <div key={index} className="flex items-center mb-2" style={{ top: `${index * 2}rem`, transform: 'translateY(-50%)' }}>
@@ -152,7 +129,7 @@ const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValue
             />
             <button
               onClick={() => handleDelete(index)}
-              className="ml-2 px-2 py-1 bg-red-500 text-white rounded"
+              className="ml-2 px-2 py-1 bg-cyan-500 text-white rounded"
             >
               Delete
             </button>

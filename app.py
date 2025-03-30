@@ -132,7 +132,10 @@ def api_search_for_song( data ):
 # Get user profile information
 @socketio.on( "/api/get_profile_information" )
 def api_get_profile_information( data ):
-    return { "message" : retrossette_db_queries.get_user_profile_information( session[ "UserURI" ] ) }
+    try:
+        return { "message" : retrossette_db_queries.get_user_profile_information( session[ "UserURI" ] ) }
+    except:
+        return redirect("/")
 
 # Get playlists for user
 @socketio.on( "/api/get_playlists" )
@@ -258,7 +261,7 @@ def index( path ):
                  in react, we will only return a file if it exists. Otherwise
                  we defer to the routing specified in the react app
     """
-    if "UserAPIWrapper" not in session.keys():
+    if "UserURI" not in session.keys() or not retrossette_db_queries.user_in_db( session[ "UserURI" ] ):
         session[ "ReturnPath" ] = path
         return redirect( user_auth.request_spotify_user_authentication() )
 

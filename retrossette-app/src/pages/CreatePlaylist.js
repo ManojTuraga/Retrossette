@@ -76,6 +76,13 @@ PROCEDURES
 */
 function CreatePlaylist ()
     {
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const handleOpen = () => {
+        setDropdownOpen(!dropdownOpen);
+      }; 
+    
     // Define a state variable to hold the value
     // of the serch input
     const [searchInput, setSearchInput] = useState('');
@@ -135,6 +142,29 @@ function CreatePlaylist ()
             window.location.href = response[ "post_submit_url" ];    
             } )
         }
+
+        // This function handles the behavior of adding
+    // a new slider for a genre
+    const addGenre = () => {
+        // Essentially, only add up to the total number of
+        // genres that are supported
+        if (genreAssociationValues.length < allGenres.length) {
+        // Add a new association to the list
+        setGenreAssociationValues([...genreAssociationValues, 0]);
+
+        // The following for loop is to ensure that
+        // the new dropdown takes on a value that
+        // corresponds to the first available value
+        for( let i = 0; i < allGenres.length; i++ )
+            {
+            if( !(genreDropdownValues.includes( allGenres[ i ].name ) ) )
+            {
+            setGenreDropdownValues([...genreDropdownValues, allGenres[ i ].name]);
+            break;
+            }
+            }
+        }
+    };
 
     // Define a local function that will handle searches for
     // music on spotify
@@ -223,33 +253,34 @@ function CreatePlaylist ()
         </div>*/
         <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-65px)]">
             <div className="col-start-1 col-span-2 row-start-1 row-span-3 ">
-                <div className="grid grid-cols-1 content-start gap-4 bg-cyan-500 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
-                    <div className="col-span-full place-self-center text-white text-2xl">Cassette Name</div>
-                    <img src={cassette} alt="" className="w-full h-auto col-span-full place-self-center col-span-1"/>
+                <div className="grid grid-cols-1 content-between gap-4 bg-cyan-500 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
+                    <div className="grid grid-cols-4 col-span-full">
+                        <button type="submit" onClick={ sendPlaylist } class="w-auto h-full col-span-1 text-white bg-pink-700 hover:bg-pink-800 font-medium rounded-full text-sm text-center me-5">Submit</button>
+                        <input type="text" className="col-span-2 bg-cyan-400 text-2xl text-center text-white rounded-lg block w-full p-2.5 border-transparent focus:outline-none placeholder-white" placeholder="Cassette Name" required />
+                    </div>
+                    <img src={cassette} alt="" className="w-5/6 col-span-full place-self-center col-span-1"/>
+                    <div className="col-span-full place-self-center rounded-xl border-2 border-black h-5 w-full bg-pink-700"></div>
                 </div>
+
             </div>
             
             <div className="col-start-1 col-span-2 row-start-4 row-span-2">
-                <div className="grid sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 content-start gap-4 
-                                bg-pink-700 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
-                    <div className="grid grid-cols-5 col-span-full">
-                        <div className="col-span-4">
-                            <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-[#2b2b2b] overflow-hidden">
-                                <div className="grid place-items-center h-full w-12 text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
+                <div className="grid grid-cols-5 content-start gap-4 
+                                bg-pink-700 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
 
-                                <input
-                                className="ps-2 peer h-full w-full outline-none text-sm text-white pr-2 bg-[#3b3b3b]"
-                                type="text"
-                                id="search"
-                                placeholder="Genres" /> 
-                            </div>
-                        </div>
-                        <div className="my-auto mx-auto col-span-1 text-white text-2xl"></div>  
-                    </div>  
+                    <div className="col-span-2 text-white text-2xl">Add Genres</div>
+
+                    <button onClick={addGenre} type="submit" class="col-span-3 place-self-end text-white bg-cyan-500 hover:bg-cyan-600 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                        </svg>
+                        <span class="sr-only">Icon description</span>
+                    </button>
+                
+                    <div className="col-span-full">
+                        <Slider allGenres={allGenres} values={ genreAssociationValues } setValues={setGenreAssociationValues} dropdownValues={genreDropdownValues} setDropdownValues={setGenreDropdownValues}/>
+
+                    </div>
                 </div>
             </div>
 
@@ -277,7 +308,7 @@ function CreatePlaylist ()
             <div className="col-start-3 col-span-3 row-start-3 row-span-3">
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
                             bg-pink-700 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
-                    <div className="grid grid-cols-5 col-span-full">
+                    <div className="grid grid-cols-5 col-span-full sticky">
                         <div className="col-span-2">
                             <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-[#2b2b2b] overflow-hidden">
                                 <div className="grid place-items-center h-full w-12 text-white">

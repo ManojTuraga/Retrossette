@@ -216,7 +216,7 @@ def user_in_db( user_uri ):
 
     # The result of this query is a list with a single query with
     # the first element as the boolean value we need
-    return result[ 0 ][ 0 ]
+    return len(result) > 0
 
 def song_in_db( song_id ):
     """
