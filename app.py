@@ -132,10 +132,7 @@ def api_search_for_song( data ):
 # Get user profile information
 @socketio.on( "/api/get_profile_information" )
 def api_get_profile_information( data ):
-    try:
         return { "message" : retrossette_db_queries.get_user_profile_information( session[ "UserURI" ] ) }
-    except:
-        return redirect("/")
 
 # Get playlists for user
 @socketio.on( "/api/get_playlists" )

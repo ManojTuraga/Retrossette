@@ -151,7 +151,7 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
     useEffect(() => {
         if (deviceId) {
             // Transfer playback to the Web Playback SDK player
-            fetch('https://api.spotify.com/v1/me/player', {
+            fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -159,7 +159,8 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
                 },
                 body: JSON.stringify({
                     device_ids: [deviceId],
-                    play: true
+                    play: true,
+                    uris: listOfSongs
                 })
             }).then(response => {
                 if (response.ok) {
@@ -171,45 +172,21 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
         }
     }, [deviceId, token, listOfSongs]);
 
-    const playTracks = (trackUris) => {
-        console.log( trackUris );
-        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                uris: trackUris,
-                offset: {
-                    position: 0
-                }
-            })
-        }).then(response => {
-            if (response.ok) {
-                console.log('Playback started successfully');
-            } else {
-                console.error('Failed to start playback');
-            }
-        });
-    };
-
     // Define the rendering player for this componenet
     if (!is_active) {
         return (
-            <div>
+            <>
                 <div className="container">
                     <div className="main-wrapper">
                         <b> Instance not active. Transfer your playback using your Spotify app </b>
                     </div>
                 </div>
-            </div>
+            </>
         );
     } else {
-        // Render the boombox
         return (
-            <div className="container">
-		<div className="main-wrapper" style={{width: '841px', height: '595px'}}>
+          <div className="container">
+              <div className="main-wrapper">
 		  
                   <img src={require("../boombox_assets/player.png")}
 		       style={{position: 'absolute', top: '0px', left: '0px', zIndex: '2'}}

@@ -83,8 +83,11 @@ def get_user_profile_information( user_uri ):
         """, 
         has_return=True
     )
-
-    return { "profile_name" : result[ 0 ][ 0 ], "profile_image" : result[ 0 ][ 1 ] }
+    try:
+        return { "profile_name" : result[ 0 ][ 0 ], "profile_image" : result[ 0 ][ 1 ] }
+    
+    except:
+        return { "profile_name" : "", "profile_image" : None }
 
 
 def get_genres():
@@ -222,7 +225,7 @@ def user_in_db( user_uri ):
 
     # The result of this query is a list with a single query with
     # the first element as the boolean value we need
-    return len(result) > 0
+    return result[ 0 ][ 0 ]
 
 def song_in_db( song_id ):
     """

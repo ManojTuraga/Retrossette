@@ -255,8 +255,9 @@ function CreatePlaylist ()
             <div className="col-start-1 col-span-2 row-start-1 row-span-3 ">
                 <div className="grid grid-cols-1 content-between gap-4 bg-cyan-500 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
                     <div className="grid grid-cols-4 col-span-full">
-                        <button type="submit" onClick={ sendPlaylist } class="w-auto h-full col-span-1 text-white bg-pink-700 hover:bg-pink-800 font-medium rounded-full text-sm text-center me-5">Submit</button>
-                        <input type="text" className="col-span-2 bg-cyan-400 text-2xl text-center text-white rounded-lg block w-full p-2.5 border-transparent focus:outline-none placeholder-white" placeholder="Cassette Name" required />
+                        <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 ) || 
+                ( genreDropdownValues.length === 0 ) || genreAssociationValues.reduce((acc, curr) => acc + Number(curr), 0) !== 100 } onClick={ sendPlaylist } class="w-auto h-full col-span-1 text-white bg-pink-700 hover:bg-pink-800 font-medium rounded-full text-sm text-center me-5">Submit</button>
+                        <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } className="col-span-2 bg-cyan-400 text-2xl text-center text-white rounded-lg block w-full p-2.5 border-transparent focus:outline-none placeholder-white" placeholder="Cassette Name" required />
                     </div>
                     <img src={cassette} alt="" className="w-5/6 col-span-full place-self-center col-span-1"/>
                     <div className="col-span-full place-self-center rounded-xl border-2 border-black h-5 w-full bg-pink-700"></div>
