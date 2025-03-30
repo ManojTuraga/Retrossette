@@ -1,3 +1,39 @@
+/******************************************************************************
+Module: PlayMusic.js
+Creation Date: February 18th, 2025
+Authors: Manoj Turaga
+Contributors: Manoj Turaga, Ceres Botkin
+
+Description:
+    This page creates the logic for the web player boombox
+
+Inputs:
+    None
+
+Outputs:
+    React Component 
+
+Preconditions:
+    A server running on the flask environment must be active
+    
+Postconditions:
+    Unknown
+
+Error Conditions:
+    None
+
+Side Effects:
+    Interactions on the webpage may lead to changes in database state
+
+Invariants:
+    There will only be on instance of the server running at all times
+
+Known Faults
+    None
+    
+Sources: React Documentation, Socketio Documentation
+******************************************************************************/
+
 /*
 NOTE: THIS CODE IS CURRENTLY FOLLOWING THE EXAMPLE CREATED AT
 https://github.com/spotify/spotify-web-playback-sdk-example
@@ -47,10 +83,19 @@ async function pressCassetteButton(button, player) {
 }
 
 const SpotifyPlayer = ({ token, listOfSongs }) => {
+    // Set state variable for controlling pause state
     const [is_paused, setPaused] = useState(false);
+
+    // Set state variable for controlling is active state
     const [is_active, setActive] = useState(false);
+
+    // Set state variable for controlling player state
     const [player, setPlayer] = useState(undefined);
+
+    // Set state variable for controlling current track
     const [current_track, setTrack] = useState(track);
+
+    // Set state variable for controlling device id
     const [deviceId, setDeviceId] = useState(null);
 
     useEffect(() => {
@@ -62,23 +107,29 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
 
         window.onSpotifyWebPlaybackSDKReady = () => {
             console.log(token);
+
+            // Initialize a spotify player
             const player = new window.Spotify.Player({
                 name: 'Web Playback SDK',
                 getOAuthToken: cb => { cb(token); },
                 volume: 0.5
             });
 
+            // Set player as the active player
             setPlayer(player);
-
+            
+            // Add function for when the player is ready to being playing
             player.addListener('ready', ({ device_id }) => {
                 console.log('Ready with Device ID', device_id);
                 setDeviceId(device_id);
             });
 
+            // Add a function for when the player is not ready to begin playing
             player.addListener('not_ready', ({ device_id }) => {
                 console.log('Device ID has gone offline', device_id);
             });
 
+            // Add a function to handle state changes in the player
             player.addListener('player_state_changed', (state => {
                 if (!state) {
                     return;
@@ -92,6 +143,7 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
                 });
             }));
 
+            // Connect to the player
             player.connect();
         };
     }, [token, listOfSongs]);
@@ -142,6 +194,7 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
         });
     };
 
+    // Define the rendering player for this componenet
     if (!is_active) {
         return (
             <div>
@@ -153,6 +206,7 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
             </div>
         );
     } else {
+        // Render the boombox
         return (
             <div className="container">
 		<div className="main-wrapper" style={{width: '841px', height: '595px'}}>

@@ -57,6 +57,8 @@ PROCEDURES
     of the entire application */
 function Layout( { profileName, profileImage } )
     {
+    // If there is no profile image provided, render with the default 
+    // profile image
     if( profileImage == null )
         {
         return (
@@ -68,6 +70,7 @@ function Layout( { profileName, profileImage } )
                 </>
             )  
         }
+    // If a profile image has been provide, render with that instead
     else
         {
             return (

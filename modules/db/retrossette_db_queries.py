@@ -71,6 +71,12 @@ retrossette_db_intf_spec.loader.exec_module( retrossette_db_intf )
 # PROCEDURES
 ###############################################################################
 def get_user_profile_information( user_uri ):
+    """
+    Function: Get User Profile Information
+
+    Description: This function will get the profile name and the profile image for a
+                 user that is stored in the database
+    """
     result = retrossette_db_intf.execute_query(
         f"""
         SELECT user_display_name, user_profile_image from "user" where user_uri='{ user_uri }'; 
@@ -245,6 +251,13 @@ def song_in_db( song_id ):
     return result[ 0 ][ 0 ]
 
 def update_rating( user_uri, playlist_id, stars, comment ):
+    """
+    Function: Update Playlist Rating
+
+    Description: This function updates the rating and comment for a playlist given its assocation
+                 to a user
+    """
+    # Determine if the user had already made a comment to this playlist
     result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT 1 FROM rates WHERE user_uri='{ user_uri }' AND playlist_id=%s;
@@ -252,7 +265,9 @@ def update_rating( user_uri, playlist_id, stars, comment ):
                 vars=( playlist_id, ),
                 has_return=True
             )
- 
+
+    # If there is already an entry, simply edit the entry to reflect the new rating and
+    # comment
     if len( result ) > 0:
         retrossette_db_intf.execute_query(
                 f"""
@@ -263,6 +278,7 @@ def update_rating( user_uri, playlist_id, stars, comment ):
             )
         
     else:
+        # If there is no entry associated for this user, add a row in the table
         retrossette_db_intf.execute_query(
                 """
                 INSERT INTO rates (user_uri, playlist_id, rates_stars, rates_comment) VALUES (%s, %s, %s, %s);

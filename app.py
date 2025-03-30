@@ -172,6 +172,7 @@ def api_get_songs_from_playlist( data ):
     return { "status" : "success", 
              "message" : { "songs" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) } | ( retrossette_db_queries.get_rating( session[ "UserURI" ], data[ "message" ] ) ) }
 
+# Update the rating for a playlist
 @socketio.on( "/api/update_rating_for_playlist" )
 def api_update_rating_for_playlist( data ):
     retrossette_db_queries.update_rating( session[ "UserURI" ], data[ "message" ][ "playlist_id" ], data[ "message" ][ "stars" ], data[ "message" ][ "comment" ] )
@@ -227,6 +228,8 @@ def api_return_from_login():
         user_profile = session[ "UserAPIWrapper" ].get_user_profile()
         session[ "UserURI" ] = user_profile[ "uri" ]
         
+        # If the user as a profile image, then get the URL that references
+        # it, otherwise set the image to None
         if len( user_profile[ "images" ] ) > 0:
             image = user_profile[ "images" ][ 0 ][ "url" ]
 
