@@ -42,8 +42,6 @@ import React, { useState } from 'react';
 
 // Import the Link component from the react router dom
 import { Link } from 'react-router-dom';
-import logo from '../images/layout/blank_avatar.png';
-
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
@@ -75,7 +73,3 @@ export default function Navbar({ ProfileName, ProfileImage })
             </nav>
         );
     }
-
-Navbar.defaultProps = {
-    ProfileImage: logo,
-      };

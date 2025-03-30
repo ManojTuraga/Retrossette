@@ -47,6 +47,8 @@ import { Outlet } from 'react-router-dom'
 import { SOCKET } from './components/socket';
 import React, { useState } from 'react';
 
+import logo from './images/layout/blank_avatar.png';
+
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
@@ -55,28 +57,30 @@ PROCEDURES
     of the entire application */
 function Layout( { profileName, profileImage } )
     {
-    // Render the required componenets for this page
-    if( profileImage != null )
+    if( profileImage == null )
         {
         return (
-            <>  
-                <Navbar ProfileName={ profileName } ProfileImage={profileImage}/>
-                <main>
-                    <Outlet/>
-                </main>
-            </>
-        )
+                <>  
+                    <Navbar ProfileName={ profileName } ProfileImage={logo}/>
+                    <main>
+                        <Outlet/>
+                    </main>
+                </>
+            )  
         }
     else
         {
-        <>  
-            <Navbar ProfileName={ profileName }/>
-            <main>
-                <Outlet/>
-            </main>
-        </>
+            return (
+                <>  
+                    <Navbar ProfileName={ profileName } ProfileImage={profileImage}/>
+                    <main>
+                        <Outlet/>
+                    </main>
+                </>
+            )  
         }
-        
+
+     
     }
 
 // Export the layout function
