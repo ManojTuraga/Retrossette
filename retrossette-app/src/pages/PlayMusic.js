@@ -70,7 +70,9 @@ function PlayMusic() {
     const [comment, setComment] = useState( "" );
     const [searchParams] = useSearchParams();
 
-    let playlistID = searchParams.get( 'id' );
+    const [errState, setErrState] = useState( false );
+
+    let playlistID = searchParams.get( 'id' ) || 0;
 
     function handleReviewSubmit( rating, comment )
         {
@@ -81,18 +83,24 @@ function PlayMusic() {
     useEffect(() => {
             /// Get the Songs that we need to play for this playlist
             SOCKET.emit("/api/get_songs_from_playlist", { message: playlistID }, (response) => {
-                console.log( response );
-                setListOfSongs(response["message"][ "songs" ]);
-            
-               if( "stars" in response[ "message" ] )
+                if(response[ "status" ] === "success")
                     {
-                    setRating( response[ "message" ][ "stars" ] )
-                    } 
-
-                if( "comment" in response[ "message" ] )
+                    setListOfSongs(response["message"][ "songs" ]);
+        
+                    if( "stars" in response[ "message" ] )
+                            {
+                            setRating( response[ "message" ][ "stars" ] )
+                            } 
+        
+                        if( "comment" in response[ "message" ] )
+                            {
+                            setComment( response[ "message" ][ "comment" ] )
+                            } 
+                    }
+                else
                     {
-                    setComment( response[ "message" ][ "comment" ] )
-                    } 
+                    setErrState( true );
+                    }
             });
     
             // Get the API token for the user
@@ -102,6 +110,12 @@ function PlayMusic() {
         }, []);
 
     // Render the componenet
+    if( errState )
+            {
+            return (
+                <h1>No playlist ID Provided</h1>
+            )
+            }
     return (
         <>
         { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
