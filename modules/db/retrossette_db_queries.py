@@ -177,7 +177,7 @@ def get_playlists( user_uri ):
     result = [ { "name" : n, "id" : i } for i, n in result ]
     return result
 
-def get_songs_in_playlist( playlist_id ):
+def get_songs_in_playlist( user_uri, playlist_id ):
     """
     Function: Get Songs in Playlist
 
@@ -195,6 +195,41 @@ def get_songs_in_playlist( playlist_id ):
         vars=( playlist_id, ),
         has_return=True
     )
+
+    # Every time a user fetches this set of songs, we assume that they
+    # like the music, so will indicate  that the user is interested in
+    # the song and keep track of how many times they listen to it
+    # Determine if the user had already made a comment to this playlist
+    result = retrossette_db_intf.execute_query(
+                f"""
+                SELECT 1 FROM listens_to WHERE user_uri='{ user_uri }' AND playlist_id=%s;
+                """,
+                vars=( playlist_id, ),
+                has_return=True
+            )
+
+    # If there is already an entry, simply edit the entry to reflect an increase in the number of
+    # listens
+    if len( result ) > 0:
+        retrossette_db_intf.execute_query(
+                f"""
+                UPDATE listens_to SET num_of_listens=num_of_listens+1 WHERE user_uri='{ user_uri }' AND playlist_id=%s;
+                """,
+                vars=( playlist_id, ),
+                has_return=False
+            )
+        
+    else:
+        # If there is no entry associated for this user, add a row in the table
+        retrossette_db_intf.execute_query(
+                """
+                INSERT INTO listens_to (user_uri, playlist_id, num_of_listens) VALUES (%s, %s, %s);
+                """,
+                vars=( user_uri, playlist_id, 1 ),
+                has_return=False
+            )
+
+
     # The result of this query is a tuple with the first element as the
     # song id. Convert this into a list so it is JSONable
     result = [ id[ 0 ] for id in result ]

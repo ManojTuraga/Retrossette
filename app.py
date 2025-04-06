@@ -161,13 +161,13 @@ def api_submit_playlist( data ):
 # Get every song that is in a playlist
 @socketio.on( "/api/get_songs_from_playlist" )
 def api_get_songs_from_playlist( data ):
-    songs = retrossette_db_queries.get_songs_in_playlist( data[ "message" ] )
+    songs = retrossette_db_queries.get_songs_in_playlist( session[ "UserURI" ], data[ "message" ] )
 
     if len( songs ) == 0:
         return { "status" : "error" } 
 
     return { "status" : "success", 
-             "message" : { "songs" : retrossette_db_queries.get_songs_in_playlist( data[ "message" ] ) } | ( retrossette_db_queries.get_rating( session[ "UserURI" ], data[ "message" ] ) ) }
+             "message" : { "songs" : songs } | ( retrossette_db_queries.get_rating( session[ "UserURI" ], data[ "message" ] ) ) }
 
 # Update the rating for a playlist
 @socketio.on( "/api/update_rating_for_playlist" )
