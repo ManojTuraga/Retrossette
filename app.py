@@ -188,6 +188,10 @@ def api_get_all_genres( data ):
 @socketio.on( "/api/update_theme" )
 def api_update_theme( data ):
     retrossette_db_queries.update_theme( session[ "UserURI" ], data[ "message" ] )
+
+@socketio.on( "/api/get_recommendation" )
+def api_get_recommendation( data ):
+    retrossette_db_queries.get_playlist_recommendation( session[ "UserURI" ] )
         
 ###############################################################################
 # CLIENT ROUTES

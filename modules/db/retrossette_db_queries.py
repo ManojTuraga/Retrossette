@@ -464,3 +464,94 @@ def add_playlist( user_uri, playlist ):
             vars=( result[ 0 ][ 0 ], genre_id, association ),
             has_return=False
         )
+
+def get_playlist_recommendation( user_uri ):
+    user_uri = retrossette_db_intf.execute_query(
+                f"""
+                SELECT user_uri FROM "user" ORDER BY RANDOM() LIMIT 1;
+                """,
+                has_return=True
+            )[0][0]
+    
+    genre_ids = retrossette_db_intf.execute_query(
+                f"""
+                SELECT genre_id FROM genre;
+                """,
+                has_return=True
+            )
+    total = { genre[ 0 ] : 0  for genre in genre_ids }
+
+    
+    result = retrossette_db_intf.execute_query(
+                f"""
+                SELECT SUM(num_of_listens) FROM listens_to WHERE user_uri='{ user_uri }';
+                """,
+                has_return=True
+            )
+
+    if len( result ) > 0:
+        total_num = result[0][0]
+
+    else:
+        total_num = 1
+    
+    result = retrossette_db_intf.execute_query(
+                f"""
+                SELECT genre_id, association * num_of_listens FROM listens_to NATURAL JOIN groups WHERE user_uri='{ user_uri }';
+                """,
+                has_return=True
+            )
+
+    for r in result:
+        total[ r[ 0 ] ] += r[ 1 ]
+
+    for key in total.keys():
+        total[ key ] /= total_num
+
+    already_listened = retrossette_db_intf.execute_query(
+                f"""
+                SELECT playlist_id FROM listens_to WHERE user_uri='{ user_uri }';
+                """,
+                has_return=True
+            )
+    
+    not_listened = retrossette_db_intf.execute_query(
+                f"""
+                SELECT P.playlist_id FROM playlist as P WHERE P.playlist_id not in (SELECT playlist_id FROM listens_to WHERE user_uri='{ user_uri }');
+                """,
+                has_return=True
+            )
+    
+    arr_to_use = not_listened
+    
+    if len( not_listened ) == 0:
+        arr_to_use = already_listened
+
+    playlist_rec = 0
+    playlist_dist = None
+
+    for playlist_id in arr_to_use:
+        playlist_id = playlist_id[ 0 ]
+        genre_association = retrossette_db_intf.execute_query(
+                """
+                SELECT genre_id, association FROM groups NATURAL JOIN rates WHERE playlist_id=%s ORDER BY rates_stars DESC;
+                """,
+                vars=( playlist_id, ),
+                has_return=True
+            )
+        
+        curr_association = { genre[ 0 ] : 0  for genre in genre_ids }
+
+        for a in genre_association:
+            curr_association[ a[ 0 ] ] = a[ 1 ]
+
+        local_dist = sum( [ ( curr_association[ key[ 0 ] ] + total[ key[ 0 ] ] ) ** 2 for key in genre_ids ] ) ** 0.5
+
+        if playlist_dist == None or local_dist < playlist_dist:
+            playlist_rec = playlist_id
+            playlist_dist = local_dist
+ 
+        
+    return playlist_rec
+    
+

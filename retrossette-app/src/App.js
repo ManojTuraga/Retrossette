@@ -54,6 +54,7 @@ import PlayMusic from './pages/PlayMusic';
 import HomePage from './pages/HomePage'
 import Layout from './Layout'
 import TestThemes from './pages/TestThemes';
+import GetRecommendation from './pages/GetRecommendation';
 //import Boombox from './Boombox.js';
 
 // Import all the required routing libraries from the react
@@ -132,7 +133,8 @@ function App()
                         <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
                         <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
                         <Route path="/TestThemes" element={ <TestThemes/> }></Route>
-                        </Route>
+                        <Route path="/GetRecommendation" element={ <GetRecommendation/> }></Route>
+                    </Route>
                 </Routes>
             </Router>
             // <>

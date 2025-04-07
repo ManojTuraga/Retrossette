@@ -44,7 +44,6 @@ function TestThemes()
     // Get all the themes for the server
     SOCKET.emit( "/api/get_themes", {}, ( response ) =>
         {
-        updateListOfThemes( response[ "message" ] );
         } );
 
     // Define a style dictionary for the first primary color
