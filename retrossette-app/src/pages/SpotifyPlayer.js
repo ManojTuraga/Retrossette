@@ -65,27 +65,11 @@ const track = {
 // Sound effect for pressing a button on the cassette player
 const button_sfx = new Audio('../boombox_assets/button_press_sfx.mp3')
 
-/*
-// Controlls the player when user pressed button button with player player
-async function pressCassetteButton(button, player) {
-    //const buttonWait = 100; // Amount to wait before completing action
-
-    // Play button press sound effect
-    button_sfx.play();
-
-    // Determins what happens when button is pressed
-    if (button == 'playpause') {
-	sleep(buttonWait).then(() => { player.togglePlay(); });
-    } else if (button == 'rewind') {
-	sleep(buttonWait).then(() => { skipCassetteButton('rewind', player); });
-    } else if (button == 'fastforward') {
-	sleep(buttonWait).then(() => { skipCassetteButton('fastforward', player); });
-    }
-    } */
-
+// Gets the total length of the cassette from a list of songs in ms
 function getTotalCassetteLength(songList) {
     let totalCassetteLength = 0;
-	
+
+    // Add each duration of each track
     if (songList.length > 0) {
 	for (let track of songList) {
 	    totalCassetteLength += track['duration_ms'];
@@ -95,14 +79,20 @@ function getTotalCassetteLength(songList) {
     return totalCassetteLength;
 }
 
+// Get the absolute position in ms in a current cassette with list of songs
+// songList playing current song current_song_uri, and the current position
+// in ms in the current song
 function getAbsolutePosition(songList, current_song_uri, current_position) {
     let pos = 0;
 
     for (let track of songList) {
 	if (current_song_uri === track['uri'].slice(14)) {
+	    // If the current track is the current song playing, add and
+	    // return the current position
 	    pos += current_position;
 	    break;
 	} else {
+	    // Otherwise just add the length of the whole song
 	    pos += track['duration_ms'];
 	}
     }
@@ -110,16 +100,20 @@ function getAbsolutePosition(songList, current_song_uri, current_position) {
     return pos;
 }
 
+// Given the current absolute position, return the current song and position
+// in the list of songs songList
 function getRelativePosition(songList, absolute_position, totalCassetteLength) {
     let current_song_uri = '';
     let current_position = 0;
     let pos = absolute_position;
 
+    // Check if position is in bounds and just reset cassette if not
     if ((absolute_position <= 0) ||
 	(absolute_position >= totalCassetteLength)) {
 	return [songList[0]['uri'], 0];
     }
 
+    // Go through songs until reach the current song from the absolute position
     for (let track of songList) {
 	if (pos < track['duration_ms']) {
 	    current_song_uri = track['uri'];
@@ -133,6 +127,8 @@ function getRelativePosition(songList, absolute_position, totalCassetteLength) {
     return [current_song_uri.slice(14), current_position];
 }
 
+// Given a song URI in a song list songList get the index of the song in
+// the list
 function uriToTrackIndex(songList, uri) {
     for (const [index, track] of songList.entries()) {
 	if (uri === track['uri'].slice(14)) {
@@ -143,6 +139,7 @@ function uriToTrackIndex(songList, uri) {
     return 0;
 }
 
+// Debugging function for pretty print of time in ms
 function printTime(time) {
     const ms = time % 1000;
     time = Math.floor(time / 1000);
@@ -154,22 +151,6 @@ function printTime(time) {
 
     return `${hours}:${minutes}:${seconds}:${ms}`;
 }
-
-/*
-function changeToNewTrack(player, offset, relative_pos) {
-    if (offset === 0) {
-	return player.pause().then(player.seek(relative_pos));
-    } else if (offset > 0) {
-	return player.nextTrack().then(() => {
-	    changeToNewTrack(player, offset - 1, relative_pos);
-	});
-    } else {
-	return player.previousTrack().then(() => {
-	    changeToNewTrack(player, offset + 1, relative_pos);
-	});
-    }
-}
-*/
     
 const SpotifyPlayer = ({ token, listOfSongs }) => {
     // Set state variable for controlling pause state
@@ -202,26 +183,37 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
     // Set state variable for total cassette length
     const [totalCassetteLength, setTotalCassetteLength] = useState(0);
 
+    // Set state variable representing the offset of the current song
+    // and also the position in that song
     const [offset, setOffset] = useState(0);
     const [relative_pos, setRelativePos] = useState(0);
 
-    // Set state variable for current state of song
-    //const [current_absolute_position, setAbsolutePosition] = useState(0);
-    //let totalCassetteLength = 0;
-    const speedupFactor = 10;
+    // Determines how fast rewind or fast forward is
+    const speedupFactor = 4;
 
+    // Controlls what happens when fast forwarding and rewinding is happening
+    // and also changes the state of the player when finished
     useEffect(() => {
+	// ID for timer to see how long the button is held for
 	let intervalID;
+	
+	// If the cassette is currently rewinding or fast forwarding then
+	// add a timer to see how long the button is held for
 	if (is_rewinding || is_fast_forwarding) {
 	    if (is_rewinding) {
 		setPaused(true);
 		setFastForward(false);
+		// Timer backwards for rewinding
 		intervalID = setInterval(() => setTimeButtonHeld(time_button_held - 10), 10);
 	    } else if (is_fast_forwarding) {
 		setPaused(true);
 		setRewind(false);
+		// Timer forward for fast forwarding
 		intervalID = setInterval(() => setTimeButtonHeld(time_button_held + 10), 10);
 	    }
+	    
+	// Triggered when just finished rewinding or fastforwarding. This handles the result
+	// to make sure the player is updated properly
 	} else if (!(is_rewinding && is_fast_forwarding) &&
 		   (time_button_held !== 0)) {
 	    console.log(`Button Held For: ${printTime(time_button_held)}`);
@@ -229,40 +221,48 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
 	    let current_song_uri = '';
 	    let relative_pos = 0;
 
+	    // Get the current state before the button was held
 	    player.getCurrentState().then(state => {
 		if (state) {
+		    // Get current relative position before the button was held
 		    current_song_uri = state['track_window']['current_track']['uri'].slice(14);
 		    relative_pos = state['position'];
 		    console.log(state);
 		}
 
 		console.log(relative_pos);
-		
+
+		// Get absolute position and index before the button was held
 		let current_index = uriToTrackIndex(songList, current_song_uri);
 		let pos = getAbsolutePosition(songList, current_song_uri, relative_pos);
 		
 		console.log(`Current relative pos: ${printTime(relative_pos)} at index ${current_index}`);
 		console.log(`Absolute pos: ${printTime(pos)}`);
-		
+
+		// Calculate the new absolute position
 		pos += time_button_held * speedupFactor;
-		
+
+		// Calculate new relative position
 		let new_pos = getRelativePosition(songList, pos, totalCassetteLength);
 		current_song_uri = new_pos[0];
 		setRelativePos(new_pos[1]);
+
+		// Calculate new index
 		let new_index = uriToTrackIndex(songList, current_song_uri);
-		//setOffset(new_index - current_index);
 		setOffset(new_index);
 		
 		console.log(`New pos: ${printTime(relative_pos)} at index ${new_index}`)
 		console.log(`New absolute pos: ${printTime(pos)}`);
 	    });
-	    
+
+	    // Reset timer
 	    setTimeButtonHeld(0);
 	}
 
 	return () => clearInterval(intervalID);
     }, [is_rewinding, is_fast_forwarding, time_button_held]);
 
+    // API request to change the player state after a rewind or fast forward
     useEffect(() => {
 	fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
@@ -284,23 +284,21 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
 	});
     }, [relative_pos]);
 
-    // Controlls the player when user pressed button button with player player
+    // Controls the state when user pressed button button
     async function pressCassetteButton(button, player) {
 	const buttonWait = 0; // Amount to wait before completing action
 	
 	// Play button press sound effect
 	button_sfx.play();
 	
-	// Determins what happens when button is pressed
+	// Controls state based on what button was pressed
 	if (button === 'playpause') {
 	    sleep(buttonWait).then(() => { player.togglePlay();
 					   setRewind(false);
 					   setFastForward(false); });
 	} else if (button === 'rewind') {
-	    //sleep(buttonWait).then(() => { skipCassetteButton('rewind', player); });
 	    is_rewinding ? setRewind(false) : setRewind(true);
 	} else if (button === 'fastforward') {
-	    //sleep(buttonWait).then(() => { skipCassetteButton('fastforward', player); });
 	    is_fast_forwarding ? setFastForward(false) : setFastForward(true);
 	}
     }
