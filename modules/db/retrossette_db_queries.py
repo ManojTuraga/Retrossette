@@ -200,7 +200,7 @@ def get_songs_in_playlist( user_uri, playlist_id ):
     # like the music, so will indicate  that the user is interested in
     # the song and keep track of how many times they listen to it
     # Determine if the user had already made a comment to this playlist
-    result = retrossette_db_intf.execute_query(
+    new_result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT 1 FROM listens_to WHERE user_uri='{ user_uri }' AND playlist_id=%s;
                 """,
@@ -210,7 +210,7 @@ def get_songs_in_playlist( user_uri, playlist_id ):
 
     # If there is already an entry, simply edit the entry to reflect an increase in the number of
     # listens
-    if len( result ) > 0:
+    if len( new_result ) > 0:
         retrossette_db_intf.execute_query(
                 f"""
                 UPDATE listens_to SET num_of_listens=num_of_listens+1 WHERE user_uri='{ user_uri }' AND playlist_id=%s;

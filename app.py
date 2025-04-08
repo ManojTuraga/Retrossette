@@ -116,6 +116,7 @@ def api_get_get_api_token( data ):
     Description: This function is an API endpoint to get a user's API Code
                  from their specific User API Wrapper Object
     """
+    print( session[ "UserAPIWrapper" ].get_api_token() )
     return { "message" : session[ "UserAPIWrapper" ].get_api_token() }
 
 # Search for song

@@ -34,4 +34,4 @@ from modules.db import retrossette_db_init
 from modules.db import retrossette_db_stub
 retrossette_db_init.delete_all_tables()
 retrossette_db_init.init_db()
-retrossette_db_stub.stub()
+#retrossette_db_stub.stub()
