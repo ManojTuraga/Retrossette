@@ -420,8 +420,8 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
         );
     } else {
         return (
-            <div className="container">
-              <div className="main-wrapper">
+            <div className="container" style={{height: '595px', width: '841px'}}>
+		<div className="main-wrapper">
 		  
                   <img src={require("../boombox_assets/player.png")}
 		       style={{position: 'absolute', top: '0px', left: '0px', zIndex: '2'}}
