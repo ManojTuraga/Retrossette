@@ -74,7 +74,7 @@ export default function Navbar({ ProfileName, ProfileImage })
 
         // Define the rendering the rendering behavior of this component
         return (
-            <nav className="navbar sticky top-0 flex items-center justify-between px-4" style={{ backgroundColor: "#3b3b3b" }}>
+            <nav className="z-50 navbar sticky top-0 flex items-center justify-between px-4" style={{ backgroundColor: "#3b3b3b" }}>
                 <AlternatingText text={"Retrossette"} />
 
                 {/* Button Container */}

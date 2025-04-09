@@ -44,6 +44,9 @@ import React, { useState } from 'react';
 // Import the SOCKET from the socket component
 import { SOCKET } from '../components/socket';
 
+import static_img from '../images/static.png'
+import active_img from '../images/active.gif'
+
 /*******************************************************************************
 PROCEDURES
 *******************************************************************************/
@@ -72,15 +75,21 @@ function ViewPlaylists( { handlePlaylistSelected } )
         <div className="grid grid-cols-1 mx-12 pt-4">
             <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
                 {
-                listOfPlaylists.map( ( playlist ) =>(
-                    <div onClick={ () => handlePlaylistSelected( playlist[ "id" ] ) } 
-                    className="h-auto bg-gray-700 text-white text-white aspect-square">
-                        { playlist[ "name" ] }, {playlist[ "id" ]}
+                listOfPlaylists.map((playlist) => (
+                    <div  
+                        className="h-auto text-white aspect-square flex items-center justify-center">
+                        {/* Overlay text */}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" onClick={() => handlePlaylistSelected(playlist["id"])} />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
                     </div>
-                ) )
+
+                ))
                 }
             </div>
         </div>
+
     )
     }
 
