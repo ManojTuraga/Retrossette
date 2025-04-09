@@ -42,6 +42,13 @@ import React, { useState } from 'react';
 
 // Import the Link component from the react router dom
 import { Link } from 'react-router-dom';
+
+
+import { FaHome, FaMusic, FaTape } from 'react-icons/fa'
+
+import { MdMusicVideo } from "react-icons/md";
+
+import { Button } from 'pixel-retroui';
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
@@ -55,21 +62,44 @@ export default function Navbar({ ProfileName, ProfileImage })
 
         // Define the rendering the rendering behavior of this component
         return (
-            <nav className="min-h-[65px] flex flex-row justify-center items-center items-stretch bg-[#3b3b3b] px-4 sticky w-full z-20 top-0 start-0 rounded-b-lg shadow-lg">
-                <div className="flex min-h-100 flex-1 items-center">
-                    <Link to="" className="text-center text-white hover:text-[#e05ccd] px-5">Home</Link>
-                    <Link to="/CreatePlaylist" className="text-center text-white hover:text-[#e05ccd] px-5">Create</Link>
-                    <Link to="/ViewPlaylists" className="text-center text-white hover:text-[#e05ccd] px-5">View</Link>
-                </div>
+            <nav className="navbar sticky top-0 flex items-center justify-between px-4">
+    <div className="navbar-brand font-minecraft">Retrossette</div>
 
-                <div className="flex flex-1 min-h-100 justify-center items-center">
-                    <div className="text-white">Retrossette</div>
-                </div>
+    {/* Button Container */}
+    <div className="flex space-x-4 justify-center flex-grow">
+        <Link to="">
+            <Button>
+                <span className="flex items-center space-x-2">
+                    <FaHome />
+                    <span>Home</span>
+                </span>
+            </Button>
+        </Link>
 
-                <div className="flex flex-row-reverse flex-1 min-h-100 items-center">
-                    <div className="text-white px-5">{ ProfileName }</div>
-                    <img class="w-9 h-9 rounded-full" src={ProfileImage} alt="Rounded avatar"></img>
-                </div>
-            </nav>
+        <Link to="/CreatePlaylist">
+            <Button>
+                <span className="flex items-center space-x-2">
+                    <FaMusic />
+                    <span>Create</span>
+                </span>
+            </Button>
+        </Link>
+
+        <Link to="/ViewPlaylists">
+            <Button>
+                <span className="flex items-center space-x-2">
+                    <MdMusicVideo />
+                    <span>View</span>
+                </span>
+            </Button>
+        </Link>
+    </div>
+
+    {/* Profile Information */}
+    <div className="flex flex-row-reverse items-center">
+        <div className="px-5 font-minecraft">{ProfileName}</div>
+        <img className="w-9 h-9 rounded-full" src={ProfileImage} alt="Rounded avatar" />
+    </div>
+</nav>
         );
     }

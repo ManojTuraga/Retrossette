@@ -4,7 +4,7 @@ the --template tailwindcss flag. As we are not using this file at the moment,
 we give full credit to the creators of react at https://react.dev/ and the
 creators of tailwind css at https://tailwindcss.com/
 ******************************************************************************/
-
+const neoretroUI = require('neo-retro-ui')
 module.exports = {
   content: [
     "./public/**/*.html",
@@ -13,5 +13,5 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [neoretroUI],
 }
