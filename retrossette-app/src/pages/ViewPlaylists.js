@@ -61,13 +61,26 @@ function ViewPlaylists( { handlePlaylistSelected } )
     
     // Render teh componenet
     return(
-        <ul>
+        /*<ul>
             {
             listOfPlaylists.map( ( playlist ) =>(
                 <li onClick={ () => handlePlaylistSelected( playlist[ "id" ] ) }>{ playlist[ "name" ] }, {playlist[ "id" ]}</li>
             ) )
             }
-        </ul>
+        </ul>*/
+
+        <div className="grid grid-cols-1 mx-12 pt-4">
+            <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+                {
+                listOfPlaylists.map( ( playlist ) =>(
+                    <div onClick={ () => handlePlaylistSelected( playlist[ "id" ] ) } 
+                    className="h-auto bg-gray-700 text-white text-white aspect-square">
+                        { playlist[ "name" ] }, {playlist[ "id" ]}
+                    </div>
+                ) )
+                }
+            </div>
+        </div>
     )
     }
 
