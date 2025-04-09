@@ -44,14 +44,26 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
-import { FaHome, FaMusic, FaTape } from 'react-icons/fa'
-
-import { MdMusicVideo } from "react-icons/md";
+import { FaHome, FaPencilAlt, FaMusic } from 'react-icons/fa'
 
 import { Button } from 'pixel-retroui';
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
+function AlternatingText({ text }) {
+    return (
+        <div className="navbar-brand font-minecraft drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
+        {text.split("").map((char, index) => (
+            <span key={index} className={index % 2 === 0 ? "text-cyan-500" : "text-pink-700"}>
+                {char}
+            </span>
+        ))}
+    </div>
+        
+    );
+}
+
+
 /* This function defines the rendering behavior of the navbar */
 export default function Navbar({ ProfileName, ProfileImage })
     {
@@ -62,44 +74,42 @@ export default function Navbar({ ProfileName, ProfileImage })
 
         // Define the rendering the rendering behavior of this component
         return (
-            <nav className="navbar sticky top-0 flex items-center justify-between px-4">
-    <div className="navbar-brand font-minecraft">Retrossette</div>
+            <nav className="navbar sticky top-0 flex items-center justify-between px-4" style={{ backgroundColor: "#3b3b3b" }}>
+                <AlternatingText text={"Retrossette"} />
 
-    {/* Button Container */}
-    <div className="flex space-x-4 justify-center flex-grow">
-        <Link to="">
-            <Button>
-                <span className="flex items-center space-x-2">
-                    <FaHome />
-                    <span>Home</span>
-                </span>
-            </Button>
-        </Link>
+                {/* Button Container */}
+                <div className="flex space-x-4 justify-center flex-grow">
+                    <Link to="">
+                        <Button>
+                            <span className="flex items-center space-x-2">
+                                <FaHome />
+                                <span>Home</span>
+                            </span>
+                        </Button>
+                    </Link>
+                    <Link to="/CreatePlaylist">
+                        <Button>
+                            <span className="flex items-center space-x-2">
+                                <FaPencilAlt />
+                                <span>Create</span>
+                            </span>
+                        </Button>
+                    </Link>
+                    <Link to="/ViewPlaylists">
+                        <Button>
+                            <span className="flex items-center space-x-2">
+                                <FaMusic />
+                                <span>View</span>
+                            </span>
+                        </Button>
+                    </Link>
+                </div>
 
-        <Link to="/CreatePlaylist">
-            <Button>
-                <span className="flex items-center space-x-2">
-                    <FaMusic />
-                    <span>Create</span>
-                </span>
-            </Button>
-        </Link>
-
-        <Link to="/ViewPlaylists">
-            <Button>
-                <span className="flex items-center space-x-2">
-                    <MdMusicVideo />
-                    <span>View</span>
-                </span>
-            </Button>
-        </Link>
-    </div>
-
-    {/* Profile Information */}
-    <div className="flex flex-row-reverse items-center">
-        <div className="px-5 font-minecraft">{ProfileName}</div>
-        <img className="w-9 h-9 rounded-full" src={ProfileImage} alt="Rounded avatar" />
-    </div>
-</nav>
+                {/* Profile Information */}
+                <div className="flex flex-row-reverse items-center">
+                    <div className="px-5 font-minecraft text-white">{ProfileName}</div>
+                    <img className="w-9 h-9 rounded-full" src={ProfileImage} alt="Rounded avatar" />
+                </div>
+            </nav>
         );
     }
