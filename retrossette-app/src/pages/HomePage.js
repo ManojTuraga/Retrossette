@@ -1,24 +1,44 @@
-import { SOCKET } from '../components/socket';
+
 import GenreBox from '../components/genreBox';
 import cassette from '../images/cassette_svg.svg'
+import { SOCKET } from '../components/socket';
+import React, { useEffect, useState } from 'react';
+
 
 function HomePage()
     {
+    const [cassettesByGenre, setCassettesByGenre] = useState( [] );
 
+    useEffect( () =>{
+        SOCKET.emit( "/api/get_all_genres", { }, ( first_response ) =>
+            {
+            console.log( first_response[ "message" ] );
+            for( let genre of first_response[ "message" ] ) 
+                {
+                SOCKET.emit( "/api/get_cassette_by_genre", { id: genre[ "id" ]  }, ( response ) =>
+                        {
+                            setCassettesByGenre(prevState => [ 
+                                ...prevState, 
+                                { name: genre["name"], cassettes: response["message"] } 
+                            ]);
+                            
+                            
+                        } )
+                }
+            } )
+    
+
+    }, [] )
+    
         return (
             <div className="grid grid-cols-3 gap-4 mx-12">
 
                 <div className="col-start-1 col-span-3 bg-cyan-500 rounded-b-lg p-4 h-[calc(60vh-65px)]">
                     
-                </div>       
-
-                <GenreBox Genre={ "Genre #1" }/>
-                <GenreBox Genre={ "Genre #2" }/>
-                <GenreBox Genre={ "Genre #3" }/>
-                <GenreBox Genre={ "Genre #4" }/>
-                <GenreBox Genre={ "Genre #5" }/>
-                <GenreBox Genre={ "Genre #6" }/>
-
+                </div>
+                { cassettesByGenre.map((genre) => (
+                        <GenreBox Genre={ genre[ "name" ] }/>
+                    ))} 
             </div>
         )
     }

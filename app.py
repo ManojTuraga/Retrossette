@@ -193,6 +193,10 @@ def api_update_theme( data ):
 @socketio.on( "/api/get_recommendation" )
 def api_get_recommendation( data ):
     retrossette_db_queries.get_playlist_recommendation( session[ "UserURI" ] )
+
+@socketio.on( "/api/get_cassette_by_genre" )
+def api_get_cassette_by_genre( data ):
+    return { "status" : "success", "message" : retrossette_db_queries.get_cassettes_in_genre( data[ "id" ] ) }
         
 ###############################################################################
 # CLIENT ROUTES
