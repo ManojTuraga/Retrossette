@@ -37,7 +37,7 @@ function HomePage()
                     
                 </div>
                 { cassettesByGenre.map((genre) => (
-                        <GenreBox Genre={ genre[ "name" ] }/>
+                        <GenreBox Genre={ genre[ "name" ]} CassetteNames={ genre[ "cassettes" ] }/>
                     ))} 
             </div>
         )
