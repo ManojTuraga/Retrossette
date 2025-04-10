@@ -47,6 +47,8 @@ import { SOCKET } from '../components/socket';
 import static_img from '../images/static.png'
 import active_img from '../images/active.gif'
 
+import { Button, Popup } from 'pixel-retroui';
+
 /*******************************************************************************
 PROCEDURES
 *******************************************************************************/
@@ -58,9 +60,20 @@ function ViewPlaylists( { handlePlaylistSelected } )
     {
     // Create a state variable to store the list of playlists
     const [ listOfPlaylists, setListOfPlaylists ] = useState([]);
+    const [ isPopupOpen, setIsPopupOpen ] = useState( false );
+    const [ selectedName, setSelectedName ] = useState( "" );
+    const [ selectedId, setSelectedId ] = useState( 0 );
 
     // Request a list of playlists from the server
     SOCKET.emit( "/api/get_playlists", {}, ( response ) => setListOfPlaylists( response[ "message" ] ) )
+
+
+    function handlePopupOpen( name, playlist_id )
+        {
+        setIsPopupOpen( true );
+        setSelectedName( name );
+        setSelectedId( playlist_id )
+        }
     
     // Render teh componenet
     return(
@@ -71,7 +84,7 @@ function ViewPlaylists( { handlePlaylistSelected } )
             ) )
             }
         </ul>*/
-
+        <div>
         <div className="grid grid-cols-1 mx-12 pt-4">
             <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
                 {
@@ -80,16 +93,25 @@ function ViewPlaylists( { handlePlaylistSelected } )
                         className="h-auto text-white aspect-square flex items-center justify-center">
                         {/* Overlay text */}
                         <div className="relative w-full h-full flex items-center justify-center">
-                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" onClick={() => handlePlaylistSelected(playlist["id"])} />
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" onClick={() => handlePopupOpen( playlist.name, playlist.id )} />
                             <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
                         </div>
                     </div>
 
                 ))
                 }
-            </div>
+            </div> 
         </div>
-
+        <Popup
+            isOpen={isPopupOpen}
+            onClose={()=>setIsPopupOpen( false )}
+            className='text-center'
+        >
+            <h1>Cassette Name: { selectedName }</h1>
+            <h1>Associated Genres:</h1>
+            <Button onClick={()=>handlePlaylistSelected( selectedId )}>Play Cassette</Button>
+        </Popup>
+        </div>
     )
     }
 

@@ -46,8 +46,7 @@ import React, { useState } from 'react';
 // Import the required componenets for this page
 import CassetteSection from './CassetteSection';
 import ImageGrid from './ImageGrid';
-import Slider from '../components/slider';
-
+import Slider from '../components/slider'
 // Import the styling for this page
 import '../css/CreatePlaylist.css';
 
@@ -57,8 +56,10 @@ import { SOCKET } from '../components/socket';
 // Source: https://lovepik.com/image-380224947/vintage-tape-recorder-old-mix-print.html 
 import cassetteImage from '../cassette.jpg';
 
-import {zip} from 'lodash'
-import cassette from '../images/cassette_svg.svg'
+import {add, zip} from 'lodash'
+import cassette from '../images/active.gif'
+
+import {Card, ProgressBar, Button, Input, Popup} from "pixel-retroui"
 
 /*******************************************************************************
 VARIABLES
@@ -109,6 +110,9 @@ function CreatePlaylist ()
 
     const [genreDropdownValues, setGenreDropdownValues] = useState([]);
 
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [popupText, setPopupText] = useState('');
+
     SOCKET.emit( "/api/get_all_genres", { }, ( response ) =>
         {
         setAllGenres( response[ "message" ] );  
@@ -135,12 +139,21 @@ function CreatePlaylist ()
         // Prevent the default behavior on a button click
         e.preventDefault();
 
-        // Send the playlist information to the server and on a response, redirect
-        // to the specified page
-        SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs, genres: zip( genreDropdownValues, genreAssociationValues ) } }, ( response ) =>
+        if((playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 ) || 
+        ( genreDropdownValues.length === 0 ) || genreAssociationValues.reduce((acc, curr) => acc + Number(curr), 0) !== 100)
             {
-            window.location.href = response[ "post_submit_url" ];    
-            } )
+            setIsPopupOpen( true );
+            setPopupText("Error! There are missing fields");
+            }
+        else
+            {
+            // Send the playlist information to the server and on a response, redirect
+            // to the specified page
+            SOCKET.emit( "/api/submit_playlist", { message : { name : playlistNameInput, songs : currSelectedSongs, genres: zip( genreDropdownValues, genreAssociationValues ) } }, ( response ) =>
+                {
+                window.location.href = response[ "post_submit_url" ];    
+                } )
+            }
         }
 
         // This function handles the behavior of adding
@@ -199,7 +212,15 @@ function CreatePlaylist ()
     // that are selected to be in the playlist
     function updateTotalDuration( inc )
         {
-        setTotalDuration( totalDuration + inc );
+        if( totalDuration + inc > MAX_TIME_IN_MS )
+            {
+                setIsPopupOpen( true );
+                setPopupText("Error! Length of Playlist exceeds 60 minutes");
+            }
+        else
+            {
+            setTotalDuration( totalDuration + inc );
+            }
         }
 
     // Local function to update the current selected songs
@@ -223,125 +244,150 @@ function CreatePlaylist ()
         setCurrSelectedSongs( [...currSelectedSongs, song ] );
         updateTotalDuration( Number( song[ "duration_ms" ] ) );
         }
+
+    // The following is a local function for handling input change on the slide
+  const handleChange = (index, event) => {
+    // Create a new list and update list with value from slide 
+    const newValues = [...genreAssociationValues];
+    newValues[index] = event.target.value;
+
+    // Compute the sum of all associations
+    const sumOfValues = newValues.reduce((acc, curr) => acc + Number(curr), 0);
+
+    // Only truly update teh associations if the sum of all
+    // assocations is less than or equal to 100
+    if (sumOfValues <= 100) {
+        setGenreAssociationValues(newValues);
+    }
+  };
+
+    // This is a local function for when a new value
+    // is selected in the dropdown
+    const handleSelectChange = (index, event) => {
+        // Replace the old value in the list with the
+        //  new value and update the global dropdown
+        // values variable
+        const newDropdownValues = [...genreDropdownValues];
+        newDropdownValues[index] = event.target.value;
+        setGenreDropdownValues(newDropdownValues);
+    };
+
+
+    // This is a local function to handle when a slider is deleted
+    const handleDelete = (index) => {
+        // The function takes the index that was passed in and 
+        // Just removes it from the corresponding arrays
+        const newValues = genreAssociationValues.filter((_, i) => i !== index);
+        const newDropdownValues = genreDropdownValues.filter((_, i) => i !== index);
+        setGenreAssociationValues(newValues);
+        setGenreDropdownValues(newDropdownValues);
+    };
+
+    // This is a local function to handle all the possible dropdown values
+    const getDropdownOptions = (index) => {
+        // Basically a dropdown should not include a selection if
+        // is already included as a selection in a different dropdown
+        return allGenres
+        .map((genre) => genre.name)
+        .filter((name) => !genreDropdownValues.includes(name) || genreDropdownValues[index] === name);
+    };
     
     // Render the components that are required for this page
     return (
-        /*<div className='app'>
-        <div className='current_cassette'>
-            <div>Cassette Picture/Picture Selection<br></br>
-            <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } placeholder="Enter playlist name..." />
-            <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 ) || 
-                ( genreDropdownValues.length === 0 ) || genreAssociationValues.reduce((acc, curr) => acc + Number(curr), 0) !== 100 } onClick={ sendPlaylist }> Submit</button> <br></br>
-            <img src={cassetteImage} alt="Cassette" className="cassette-image" />
-            <Slider allGenres={allGenres} values={ genreAssociationValues } setValues={setGenreAssociationValues} dropdownValues={genreDropdownValues} setDropdownValues={setGenreDropdownValues}/>
-            </div>
-            <div>
-            <CassetteSection progressPercent={( totalDuration/MAX_TIME_IN_MS ) * 100}/>
-            </div>
-            <div style={{position:'relative'}}>
-            <ImageGrid onImageClick={updateFromCurrSelectedSongs} listOfSongs={currSelectedSongs} isTrackSelection={true}/>
-            </div>
-        </div>
-        <div>
-            Search Bar<br></br>
-            <input type="text" value={searchInput} onChange={ handleSearchBarChange } placeholder="Enter search term..." />
-            <button type="submit" disabled={searchInput.trim().length === 0} onClick={ sendSearchQuery }> Submit</button>
-        </div>
-        <div className='song_selection'>
-            <ImageGrid onImageClick={updateFromSearchedSongs} listOfSongs={searchedSongs} isTrackSelection={false}/>
-        </div>
-        </div>*/
         <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-65px)]">
-            <div className="col-start-1 col-span-2 row-start-1 row-span-3 ">
-                <div className="grid grid-cols-1 content-between gap-4 bg-cyan-500 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
-                    <div className="grid grid-cols-4 col-span-full">
-                        <button type="submit" disabled={(playlistNameInput.trim().length === 0) || ( currSelectedSongs.length === 0 ) || 
-                ( genreDropdownValues.length === 0 ) || genreAssociationValues.reduce((acc, curr) => acc + Number(curr), 0) !== 100 } onClick={ sendPlaylist } class="w-auto h-full col-span-1 text-white bg-pink-700 hover:bg-pink-800 font-medium rounded-full text-sm text-center me-5">Submit</button>
-                        <input type="text" value={playlistNameInput} onChange={ handlePlaylistNameChange } className="col-span-2 bg-cyan-400 text-2xl text-center text-white rounded-lg block w-full p-2.5 border-transparent focus:outline-none placeholder-white" placeholder="Cassette Name" required />
-                    </div>
-                    <img src={cassette} alt="" className="w-5/6 col-span-full place-self-center col-span-1"/>
-                    <div className="col-span-full place-self-center rounded-xl border-2 border-black h-5 w-full bg-pink-700"></div>
-                </div>
+            <Card className="col-start-1 col-span-2 row-start-1 row-span-5 space-y-8 scrollbar-hide overflow-y-auto">
+                <Input onChange={ handlePlaylistNameChange } className="w-5/6 mx-auto block col-span-full place-self-center" placeholder="Cassette Name"/>
+                <img src={cassette} alt="" className="w-5/6 mx-auto col-span-full place-self-center"/>  
+                <ProgressBar size="md" progress={totalDuration * 100 / MAX_TIME_IN_MS}></ProgressBar>                
+                <Button onClick={addGenre}>Add a Genre</Button>
 
-            </div>
-            
-            <div className="col-start-1 col-span-2 row-start-4 row-span-2">
-                <div className="grid grid-cols-5 content-start gap-4 
-                                bg-pink-700 rounded-b-lg overflow-y-auto scrollbar-hide p-4 h-full">
-
-                    <div className="col-span-2 text-white text-2xl">Add Genres</div>
-
-                    <button onClick={addGenre} type="submit" class="col-span-3 place-self-end text-white bg-cyan-500 hover:bg-cyan-600 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                        </svg>
-                        <span class="sr-only">Icon description</span>
-                    </button>
+                <Card className="flex flex-col overflow-auto">
+                      <div className="text-center mt-2">{genreAssociationValues.join(' - ')}</div>
+                      <div className={`mt-4`}>
+                        {genreAssociationValues.map((value, index) => (
+                          <div key={index} className="flex items-center mb-2" style={{ top: `${index * 2}rem`, transform: 'translateY(-50%)' }}>
+                            <select
+                                value={genreDropdownValues[index]}
+                                onChange={(event) => handleSelectChange(index, event)}
+                                className="mr-2"
+                              >
+                                {getDropdownOptions(index).map((option, idx) => (
+                                  <option key={idx} value={option}>{option}</option>
+                                ))}
+                              </select>
                 
-                    <div className="col-span-full">
-                        <Slider allGenres={allGenres} values={ genreAssociationValues } setValues={setGenreAssociationValues} dropdownValues={genreDropdownValues} setDropdownValues={setGenreDropdownValues}/>
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={value}
+                              onChange={(event) => handleChange(index, event)}
+                              className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer range-input"
+                              style={{
+                                zIndex: index + 1
+                              }}
+                            />
+                            
+                            <Button
+                              onClick={() => handleDelete(index)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    <Button type="submit" onClick={sendPlaylist} className="self-end">Submit</Button>
+            </Card>
 
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-start-3 col-span-3 row-start-1 row-span-2">
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
-                                bg-cyan-500 rounded-b-lg h-full overflow-y-auto scrollbar-hide p-4">
-                    <div className="col-span-full text-white text-2xl">Songs</div>
+            <Card className="col-start-3 col-span-3 row-start-1 row-span-2">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 rounded-b-lg h-full overflow-y-auto scrollbar-hide p-4">
+                    <div className="col-span-full text-2xl">Selected Songs</div>
 
                     { currSelectedSongs.map((song, index) => (
-                        <div className="h-auto bg-pink-500 text-white aspect-square">
-                        <img
-                        key={ index }
-                        src={ song[ "image" ] }
-                        alt={ `${song[ "name" ]} by ${song[ "artists" ]}` }
-                        title={ `${song[ "name" ]} by ${song[ "artists" ]}` }
-                        onClick={() => updateFromCurrSelectedSongs(song, index) }
-                        />
-                        </div>
+                        <Card className="h-auto text-white aspect-square relative flex items-center justify-center transition-transform duration-300 transform hover:scale-105">
+                            <img
+                                key={index}
+                                src={song["image"]}
+                                alt={`${song["name"]} by ${song["artists"]}`}
+                                title={`${song["name"]} by ${song["artists"]}`}
+                                onClick={() => updateFromCurrSelectedSongs(song, index)}
+                            />
+                        </Card>
+                    
+                    
                     ))}
                 </div>
-            </div>
+            </Card>
 
             
 
-            <div className="col-start-3 col-span-3 row-start-3 row-span-3">
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 
-                            bg-pink-700 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
+            <Card className="col-start-3 col-span-3 row-start-3 row-span-3">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
                     <div className="grid grid-cols-5 col-span-full sticky">
-                        <div className="col-span-2">
-                            <div className="relative flex items-center w-full h-12 rounded-lg focus-within:shadow-lg bg-[#2b2b2b] overflow-hidden">
-                                <div className="grid place-items-center h-full w-12 text-white">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                </div>
-                                <input
-                                className="ps-2 peer h-full w-full outline-none text-sm text-white pr-2 bg-[#3b3b3b]"
-                                type="text"
-                                id="search"
-                                value={searchInput} 
-                                onChange={ handleSearchBarChange }
-                                onKeyDown={ sendSearchQuery }
-                                placeholder="Search something.." /> 
-                            </div>
-                        </div>
+                        <Input onKeyDown={ sendSearchQuery } onChange={ handleSearchBarChange } className="col-span-2" placeholder="Search For Song"/>
                     </div>
                     { searchedSongs.map((song, index) => (
-                        <div className="h-auto bg-cyan-500 text-white aspect-square">
+                        <Card className="h-auto text-white aspect-square relative flex items-center justify-center transition-transform duration-300 transform hover:scale-105">
                         <img
-                        key={ index }
-                        src={ song[ "image" ] }
-                        alt={ `${song[ "name" ]} by ${song[ "artists" ]}` }
-                        title={ `${song[ "name" ]} by ${song[ "artists" ]}` }
-                        onClick={() => updateFromSearchedSongs(song, index) }
+                            key={index}
+                            src={song["image"]}
+                            alt={`${song["name"]} by ${song["artists"]}`}
+                            title={`${song["name"]} by ${song["artists"]}`}
+                            onClick={() => updateFromSearchedSongs(song, index)}
                         />
-                        </div>
+                        </Card>
                     ))}
                 </div>
-            </div>
+            </Card>
 
+        <Popup
+        isOpen={isPopupOpen}
+        onClose={()=>setIsPopupOpen( false )}
+        className='text-center'
+    >
+        <h1>{popupText}</h1>
+    </Popup>
         </div>
     );
 };

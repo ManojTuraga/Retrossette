@@ -43,6 +43,8 @@ IMPORTS
 // the use state function
 import React, { useState } from 'react';
 
+import {Card} from "pixel-retroui"
+
 /*******************************************************************************
 PROCEDURES
 *******************************************************************************/
@@ -101,9 +103,9 @@ const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValue
 
   // Define the rendering behavior for this component
   return (
-    <div className="flex flex-col justify-center items-center bg-pink-700">
+    <Card className="flex flex-col bg-pink-700 w-full max-w-full">
       <div className="text-center mt-2 text-white">{values.join(' - ')}</div>
-      <div className={`w-1/3 relative mt-4`} style={{ height: containerHeight }}>
+      <div className={`w-full relative mt-4`} style={{ height: containerHeight }}>
         {values.map((value, index) => (
           <div key={index} className="flex items-center mb-2" style={{ top: `${index * 2}rem`, transform: 'translateY(-50%)' }}>
             <select
@@ -127,16 +129,17 @@ const Slider = ({ allGenres, values, setValues, dropdownValues, setDropdownValue
                 zIndex: index + 1
               }}
             />
-            <button
+            
+            {/*<button
               onClick={() => handleDelete(index)}
               className="ml-2 px-2 py-1 bg-cyan-500 text-white rounded"
             >
               Delete
-            </button>
+            </button>*/}
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 
