@@ -108,7 +108,6 @@ function ViewPlaylists( { handlePlaylistSelected } )
             className='text-center'
         >
             <h1>Cassette Name: { selectedName }</h1>
-            <h1>Associated Genres:</h1>
             <Button onClick={()=>handlePlaylistSelected( selectedId )}>Play Cassette</Button>
         </Popup>
         </div>

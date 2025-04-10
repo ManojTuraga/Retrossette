@@ -190,8 +190,8 @@ def get_playlists( user_uri ):
     # From the playlist table in the database, select the
     # playlist ID and the name of the playlist
     result = retrossette_db_intf.execute_query(
-        """
-        SELECT playlist_id, playlist_name from playlist; 
+        f"""
+        SELECT playlist_id, playlist_name from playlist NATURAL JOIN owns where user_uri='{user_uri}'; 
         """, 
         has_return=True
     )

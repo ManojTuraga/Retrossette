@@ -385,9 +385,9 @@ function CreatePlaylist ()
         isOpen={isPopupOpen}
         onClose={()=>setIsPopupOpen( false )}
         className='text-center'
-    >
-        <h1>{popupText}</h1>
-    </Popup>
+        >
+            <h1>{popupText}</h1>
+        </Popup>
         </div>
     );
 };

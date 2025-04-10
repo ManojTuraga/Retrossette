@@ -4,10 +4,13 @@ import cassette from '../images/cassette_svg.svg'
 import { SOCKET } from '../components/socket';
 import React, { useEffect, useState } from 'react';
 
+import { Card } from 'pixel-retroui';
+
 
 function HomePage()
     {
     const [cassettesByGenre, setCassettesByGenre] = useState( [] );
+    
 
     useEffect( () =>{
         SOCKET.emit( "/api/get_all_genres", { }, ( first_response ) =>
@@ -33,9 +36,9 @@ function HomePage()
         return (
             <div className="grid grid-cols-3 gap-4 mx-12">
 
-                <div className="col-start-1 col-span-3 bg-cyan-500 rounded-b-lg p-4 h-[calc(60vh-65px)]">
-                    
-                </div>
+                <Card className="col-start-1 col-span-3 p-4 h-[calc(60vh-65px)] text-2xl">
+                    <h1>Most Popular</h1>
+                </Card>
                 { cassettesByGenre.map((genre) => (
                         <GenreBox Genre={ genre[ "name" ]} CassetteNames={ genre[ "cassettes" ] }/>
                     ))} 
