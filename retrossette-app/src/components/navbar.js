@@ -47,6 +47,8 @@ import { Link } from 'react-router-dom';
 import { FaHome, FaPencilAlt, FaMusic } from 'react-icons/fa'
 
 import { Button } from 'pixel-retroui';
+
+import ButtonSound from "../boombox_assets/button_press_sfx.mp3"
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
@@ -62,6 +64,12 @@ function AlternatingText({ text }) {
         
     );
 }
+
+function ClickSound()
+    {
+    let audio = new Audio( ButtonSound );
+    audio.play().catch(error => console.error("Audio play failed:", error));
+    }
 
 
 /* This function defines the rendering behavior of the navbar */
@@ -80,7 +88,7 @@ export default function Navbar({ ProfileName, ProfileImage })
                 {/* Button Container */}
                 <div className="flex space-x-4 justify-center flex-grow">
                     <Link to="">
-                        <Button>
+                        <Button onClick={ClickSound}>
                             <span className="flex items-center space-x-2">
                                 <FaHome />
                                 <span>Home</span>
@@ -88,7 +96,7 @@ export default function Navbar({ ProfileName, ProfileImage })
                         </Button>
                     </Link>
                     <Link to="/CreatePlaylist">
-                        <Button>
+                        <Button onClick={ClickSound}>
                             <span className="flex items-center space-x-2">
                                 <FaPencilAlt />
                                 <span>Create</span>
@@ -96,7 +104,7 @@ export default function Navbar({ ProfileName, ProfileImage })
                         </Button>
                     </Link>
                     <Link to="/ViewPlaylists">
-                        <Button>
+                        <Button onClick={ClickSound}>
                             <span className="flex items-center space-x-2">
                                 <FaMusic />
                                 <span>View</span>
