@@ -33,7 +33,7 @@ Invariants:
 Known Faults
     None
     
-Sources: React Documentation, Socketio Documentation
+Sources: React Documentation, Socketio Documentation, Pixel-Retrioui Documentation
 ******************************************************************************/
 
 /*******************************************************************************
@@ -43,22 +43,17 @@ IMPORTS
 // function
 import React, { useState } from 'react';
 
-// Import the required componenets for this page
-import CassetteSection from './CassetteSection';
-import ImageGrid from './ImageGrid';
-import Slider from '../components/slider'
 // Import the styling for this page
 import '../css/CreatePlaylist.css';
 
 // Import the socket io object created in the socket componenet
 import { SOCKET } from '../components/socket';
 
-// Source: https://lovepik.com/image-380224947/vintage-tape-recorder-old-mix-print.html 
-import cassetteImage from '../cassette.jpg';
-
+// Import the add an zip functions from lodash
 import {add, zip} from 'lodash'
 import cassette from '../images/active.gif'
 
+// Import the requiree  
 import {Card, ProgressBar, Button, Input, Popup} from "pixel-retroui"
 
 /*******************************************************************************
@@ -77,13 +72,6 @@ PROCEDURES
 */
 function CreatePlaylist ()
     {
-
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
-    const handleOpen = () => {
-        setDropdownOpen(!dropdownOpen);
-      }; 
-    
     // Define a state variable to hold the value
     // of the serch input
     const [searchInput, setSearchInput] = useState('');
@@ -104,15 +92,23 @@ function CreatePlaylist ()
     // currently searched for
     const [searchedSongs, setSearchedSongs] = useState([]);
 
+    // Define a state variable to store all the genres
+    // that the user can associate their song with
     const [allGenres, setAllGenres] = useState([]);
 
+    // Store a state variable to link genres to their associations
     const [genreAssociationValues, setGenreAssociationValues] = useState([]);
 
+    // Define a state variable to store the values for the dropdown
     const [genreDropdownValues, setGenreDropdownValues] = useState([]);
 
+    // Define a state variable to show the popup
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+    // Define a state variable to determine the text of the popup
     const [popupText, setPopupText] = useState('');
 
+    // Get all the genres that the database supports
     SOCKET.emit( "/api/get_all_genres", { }, ( response ) =>
         {
         setAllGenres( response[ "message" ] );  
@@ -359,8 +355,6 @@ function CreatePlaylist ()
                     ))}
                 </div>
             </Card>
-
-            
 
             <Card className="col-start-3 col-span-3 row-start-3 row-span-3">
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">

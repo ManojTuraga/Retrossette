@@ -7,6 +7,9 @@ creators of tailwind css at https://tailwindcss.com/
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+/* Import the required styling from retroiui */
+/* We are using retroui for our UI componenets */
 @import 'pixel-retroui/dist/index.css';
 @import 'pixel-retroui/dist/fonts.css';
 

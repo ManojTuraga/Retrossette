@@ -44,9 +44,14 @@ import Navbar from './components/navbar'
 // Import the Outlet component from the react router dom
 import { Outlet } from 'react-router-dom'
 
+// Import the Socket componenet to fetch the profile image
 import { SOCKET } from './components/socket';
+
+// Import the React framework and the useState function
 import React, { useState } from 'react';
 
+// Import the blank profile image in case if the user does not
+// have a profile image
 import logo from './images/layout/blank_avatar.png';
 
 /******************************************************************************

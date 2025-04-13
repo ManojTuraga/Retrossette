@@ -4,7 +4,13 @@ the --template tailwindcss flag. As we are not using this file at the moment,
 we give full credit to the creators of react at https://react.dev/ and the
 creators of tailwind css at https://tailwindcss.com/
 ******************************************************************************/
+
+// We are using neo retro ui for our nav bar
+// please see https://github.com/maojindao55/neo-retro-ui
+// for more information
 const neoretroUI = require('neo-retro-ui')
+
+
 module.exports = {
   content: [
     "./public/**/*.html",
