@@ -31,7 +31,7 @@ Invariants:
 Known Faults
     None
     
-Sources: React Documentation, Socketio Documentation
+Sources: React Documentation, Socketio Documentation, Pixel retroui documentation
 ******************************************************************************/
 /******************************************************************************
 IMPORTS
@@ -43,15 +43,20 @@ import React, { useState } from 'react';
 // Import the Link component from the react router dom
 import { Link } from 'react-router-dom';
 
-
+// Get text elements for a home button, create button, and view button
 import { FaHome, FaPencilAlt, FaMusic } from 'react-icons/fa'
 
+// Import the pixel retro-ui button
 import { Button } from 'pixel-retroui';
 
+// Get the button sound effect
 import ButtonSound from "../boombox_assets/button_press_sfx.mp3"
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
+
+// Given a text, this function will create an element that alternates
+// Between red and blue for every character in the text
 function AlternatingText({ text }) {
     return (
         <div className="navbar-brand font-minecraft drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
@@ -65,6 +70,7 @@ function AlternatingText({ text }) {
     );
 }
 
+// This function defines the audio playback for when a button is clicked
 function ClickSound()
     {
     let audio = new Audio( ButtonSound );
@@ -85,7 +91,6 @@ export default function Navbar({ ProfileName, ProfileImage })
             <nav className="z-50 navbar sticky top-0 flex items-center justify-between px-4" style={{ backgroundColor: "#3b3b3b" }}>
                 <AlternatingText text={"Retrossette"} />
 
-                {/* Button Container */}
                 <div className="flex space-x-4 justify-center flex-grow">
                     <Link to="">
                         <Button onClick={ClickSound}>

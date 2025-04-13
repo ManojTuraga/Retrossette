@@ -1,3 +1,10 @@
+/******************************************************************************
+NOTE: THIS IS CURRENLTY JUST A TESTBED FOR CODE THAT WE THINK WOULD LOOK
+COOL. THIS IS NOT ACUTAL PRODUCTION CODE AND WILL BE DELETED
+******************************************************************************/
+
+
+
 // From the react library import the React framework
 // and the useEffect and useState functions
 import React, { useState } from 'react';
@@ -5,11 +12,15 @@ import React, { useState } from 'react';
 // Import the socket created in the socket component
 import { SOCKET } from '../components/socket';
 
+// Import the button and card components from retrio ui
 import { Button, Card } from 'pixel-retroui';
 
+// Import the cassette 8 bit gif 
+// Source https://www.deviantart.com/wavegazer/art/80-s-Tape-Rainbow-543222626
 import static_img from "../images/static.png"
 import active_img from "../images/active.gif"
 
+// Import the cassette buttons
 import { FaPlay, FaPause, FaFastForward, FaFastBackward } from "react-icons/fa";
 
 function GetRecommendation()

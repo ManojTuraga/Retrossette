@@ -31,7 +31,7 @@ Invariants:
 Known Faults
     None
     
-Sources: React Documentation, Socketio Documentation
+Sources: React Documentation, Socketio Documentation, Retroui documentation
 ******************************************************************************/
 
 /*******************************************************************************
@@ -44,9 +44,12 @@ import React, { useState } from 'react';
 // Import the SOCKET from the socket component
 import { SOCKET } from '../components/socket';
 
+// Import the cassette 8 bit gif 
+// Source https://www.deviantart.com/wavegazer/art/80-s-Tape-Rainbow-543222626
 import static_img from '../images/static.png'
 import active_img from '../images/active.gif'
 
+// Import the button and the popup from retroui
 import { Button, Popup } from 'pixel-retroui';
 
 /*******************************************************************************
@@ -60,34 +63,40 @@ function ViewPlaylists( { handlePlaylistSelected } )
     {
     // Create a state variable to store the list of playlists
     const [ listOfPlaylists, setListOfPlaylists ] = useState([]);
+
+    // Create a state variable for if the popup is open
     const [ isPopupOpen, setIsPopupOpen ] = useState( false );
+
+    // Create a state variable for the name of the playlist
     const [ selectedName, setSelectedName ] = useState( "" );
+
+    // Create a state variable for the id of the playlist
     const [ selectedId, setSelectedId ] = useState( 0 );
 
     // Request a list of playlists from the server
     SOCKET.emit( "/api/get_playlists", {}, ( response ) => setListOfPlaylists( response[ "message" ] ) )
 
-
+    // Define a a local function that will define the behavior of
+    // opening the popup
     function handlePopupOpen( name, playlist_id )
         {
+        // Declare the that the popup should be opened
         setIsPopupOpen( true );
+
+        // Set the name of the selected playlist
         setSelectedName( name );
+
+        // Set the ID of the selected playlist
         setSelectedId( playlist_id )
         }
     
     // Render teh componenet
     return(
-        /*<ul>
-            {
-            listOfPlaylists.map( ( playlist ) =>(
-                <li onClick={ () => handlePlaylistSelected( playlist[ "id" ] ) }>{ playlist[ "name" ] }, {playlist[ "id" ]}</li>
-            ) )
-            }
-        </ul>*/
         <div>
         <div className="grid grid-cols-1 mx-12 pt-4">
             <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
                 {
+                // Map every playlist to a clickable element that when clicked opens a popup
                 listOfPlaylists.map((playlist) => (
                     <div  
                         className="h-auto text-white aspect-square flex items-center justify-center">
@@ -102,6 +111,7 @@ function ViewPlaylists( { handlePlaylistSelected } )
                 }
             </div> 
         </div>
+        {/* Define a popup that when opened will show the playlist name and a button to be able to play the music */}
         <Popup
             isOpen={isPopupOpen}
             onClose={()=>setIsPopupOpen( false )}

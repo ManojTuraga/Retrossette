@@ -43,14 +43,14 @@ IMPORTS
 // function
 import React, { useState } from 'react';
 
-// Import the styling for this page
-import '../css/CreatePlaylist.css';
-
 // Import the socket io object created in the socket componenet
 import { SOCKET } from '../components/socket';
 
 // Import the add an zip functions from lodash
 import {add, zip} from 'lodash'
+
+// Import the cassette 8 bit gif 
+// Source https://www.deviantart.com/wavegazer/art/80-s-Tape-Rainbow-543222626
 import cassette from '../images/active.gif'
 
 // Import the requiree  

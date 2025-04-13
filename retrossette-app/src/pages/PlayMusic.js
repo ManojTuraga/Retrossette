@@ -42,6 +42,7 @@ IMPORTS
 // and the useEffect and useState functions
 import React, { useEffect, useState } from 'react';
 
+// Import the ability to read parameters in the url
 import { useSearchParams } from 'react-router-dom'
 
 // Import the Spotify Web Player
@@ -50,6 +51,7 @@ import SpotifyPlayer from './SpotifyPlayer';
 // Import the socket created in the socket component
 import { SOCKET } from '../components/socket';
 
+// Import the review form
 import ReviewForm from '../components/ratings';
 
 /*******************************************************************************
@@ -66,14 +68,23 @@ function PlayMusic() {
     // Create a state variable to hold the user's API token
     const [authToken, setAuthToken] = useState('');
 
+    // Define a state variable to hold the user rating
     const [rating, setRating] = useState( 0 );
+
+    // Define a state variable to hold the users comment
     const [comment, setComment] = useState( "" );
+
+    // Define a state variable to hold the parameters from the URL
     const [searchParams] = useSearchParams();
 
+    // Define a state variable to hold the error state
     const [errState, setErrState] = useState( false );
 
+    // Get the playlist ID from the search params
     let playlistID = searchParams.get( 'id' ) || 0;
 
+    // Define a function that will update the rating of
+    // the user on a submission
     function handleReviewSubmit( rating, comment )
         {
         SOCKET.emit( "/api/update_rating_for_playlist", { message: { stars: rating, comment: comment, playlist_id: playlistID } }, (response) => {} )
@@ -85,20 +96,24 @@ function PlayMusic() {
             SOCKET.emit("/api/get_songs_from_playlist", { message: playlistID }, (response) => {
                 if(response[ "status" ] === "success")
                     {
+                    // Set the list of songs if successful
                     setListOfSongs(response["message"][ "songs" ]);
         
+                    // If there is a stars rating, fetch that
                     if( "stars" in response[ "message" ] )
                             {
                             setRating( response[ "message" ][ "stars" ] )
                             } 
         
-                        if( "comment" in response[ "message" ] )
-                            {
-                            setComment( response[ "message" ][ "comment" ] )
-                            } 
+                    // If there is a user comment, fetch that as well
+                    if( "comment" in response[ "message" ] )
+                        {
+                        setComment( response[ "message" ][ "comment" ] )
+                        } 
                     }
                 else
                     {
+                    // If the request was not successful, indicate an error
                     setErrState( true );
                     }
             });
@@ -116,8 +131,11 @@ function PlayMusic() {
                 <h1>No playlist ID Provided</h1>
             )
             }
+
+    // Define the rendering behavior for this component
     return (
         <div style={{display: 'flex', flexDirection: 'column'}}>
+        { /* Wait until the the player is logged in before rending the player */ }
 	    { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
 	    <div>
 		<h1>Song Review</h1>
