@@ -490,6 +490,17 @@ def add_playlist( user_uri, playlist ):
         )
 
 def get_playlist_recommendation( user_uri ):
+    """
+    Function: Get playlist recommendation
+
+    Description: This function defines the behavior for getting playlist reccomendations.
+                 The specific unit of querying that we use is the user listening prefernces
+                 that we store over time
+    """
+
+    # THIS CODE SHOULD BE REMOVED. We need to populate the database with
+    # valid data, but we don't haVe enough real for that. We rely
+    # on the stub library to handle that
     user_uri = retrossette_db_intf.execute_query(
                 f"""
                 SELECT user_uri FROM "user" ORDER BY RANDOM() LIMIT 1;
@@ -497,15 +508,22 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )[0][0]
     
+    # Get all the genre_ids that are supported in the database
     genre_ids = retrossette_db_intf.execute_query(
                 f"""
                 SELECT genre_id FROM genre;
                 """,
                 has_return=True
             )
+    
+    # Keep track of a dictionary that keeps track of the
+    # average genre associations from all of their listens
+    # Initially we will say that the user is associated with
+    # no genres
     total = { genre[ 0 ] : 0  for genre in genre_ids }
 
-    
+    # From the listens table, we will get all the listens that the user
+    # has
     result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT SUM(num_of_listens) FROM listens_to WHERE user_uri='{ user_uri }';
@@ -513,12 +531,19 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )
 
+    # If the previous query has a return, that return will be used
+    # for the computation
     if len( result ) > 0:
         total_num = result[0][0]
 
     else:
+        # If it didn't return a value, we will assume that the user
+        # has at least one listen to ensure that the computation doesn't break
         total_num = 1
     
+    # In the database, we will get every playlist that the user listened to
+    # and adjust the association of that cassette based on the number of times
+    # that the user listened to it
     result = retrossette_db_intf.execute_query(
                 f"""
                 SELECT genre_id, association * num_of_listens FROM listens_to NATURAL JOIN groups WHERE user_uri='{ user_uri }';
@@ -526,12 +551,18 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )
 
+    # For every song they listened to, update the overall dictionary
+    # the user associations to the playlist to get the global
+    # user genre association
     for r in result:
         total[ r[ 0 ] ] += r[ 1 ]
 
+    # Normalize that association onto the number of total playlists that
+    # the user listened to
     for key in total.keys():
         total[ key ] /= total_num
 
+    # Get all the playlists that the user listened to
     already_listened = retrossette_db_intf.execute_query(
                 f"""
                 SELECT playlist_id FROM listens_to WHERE user_uri='{ user_uri }';
@@ -539,6 +570,7 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )
     
+    # Get all the playlists that the user did not listen to
     not_listened = retrossette_db_intf.execute_query(
                 f"""
                 SELECT P.playlist_id FROM playlist as P WHERE P.playlist_id not in (SELECT playlist_id FROM listens_to WHERE user_uri='{ user_uri }');
@@ -546,14 +578,22 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )
     
+    # Default our recommendations to be based off the playlists that
+    # the user has not listened to
     arr_to_use = not_listened
     
+    # If there are no playlists that the user has not listened to, go back
+    # through all the songs that the user has listened to and recommend it\
+    # from there
     if len( not_listened ) == 0:
         arr_to_use = already_listened
 
     playlist_rec = 0
     playlist_dist = None
 
+    # For every playlist, we need to get the genres associated with that
+    # We resolve conflicts by frist ordering by the stars rating by
+    # descending order
     for playlist_id in arr_to_use:
         playlist_id = playlist_id[ 0 ]
         genre_association = retrossette_db_intf.execute_query(
@@ -564,18 +604,22 @@ def get_playlist_recommendation( user_uri ):
                 has_return=True
             )
         
+        # Do the same thing that we did before where we locally compute
+        # the overall genre association
         curr_association = { genre[ 0 ] : 0  for genre in genre_ids }
 
         for a in genre_association:
             curr_association[ a[ 0 ] ] = a[ 1 ]
 
+        # Compute the distance between the global association and the local association
         local_dist = sum( [ ( curr_association[ key[ 0 ] ] + total[ key[ 0 ] ] ) ** 2 for key in genre_ids ] ) ** 0.5
 
+        # Update the global minimum if this is a more relevant minimum
         if playlist_dist == None or local_dist < playlist_dist:
             playlist_rec = playlist_id
             playlist_dist = local_dist
  
-        
+    # Return the recommendation back to the user 
     return playlist_rec
     
 
