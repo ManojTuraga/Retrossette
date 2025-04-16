@@ -290,7 +290,7 @@ function CreatePlaylist ()
     
     // Render the components that are required for this page
     return (
-        <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-65px)]">
+        <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-80px)]">
             <Card className="col-start-1 col-span-2 row-start-1 row-span-5 space-y-8 scrollbar-hide overflow-y-auto">
                 <Input onChange={ handlePlaylistNameChange } className="w-5/6 mx-auto block col-span-full place-self-center" placeholder="Cassette Name"/>
                 <img src={cassette} alt="" className="w-5/6 mx-auto col-span-full place-self-center"/>  

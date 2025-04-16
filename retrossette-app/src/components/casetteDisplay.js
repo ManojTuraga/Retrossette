@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import "../css/CassettePlayer.css"
 
+import cassette from '../images/active.gif'
+
+
 // Sleep for ms milliseconds
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -384,7 +387,9 @@ export default function CassetteDisplay({ token, listOfSongs }) {
             <div class="div2">
                 <div class="cassette-area">
                 <div id="cassette-casing">
-                    <div id="cassette-anim-spot"></div>
+                    <div id="cassette-anim-spot"c>
+                         <img src={cassette} alt="" className="w-5/6 h-5/6 relative place-self-center"/>  
+                    </div>
                 </div>
                 </div>
             </div>

@@ -61,6 +61,9 @@
   height: 85%;
   border-radius: 2em;
   box-shadow: inset 0em 0em 5em black;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 .power-area 
