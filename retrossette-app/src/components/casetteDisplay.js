@@ -369,25 +369,13 @@ export default function CassetteDisplay({ token, listOfSongs }) {
 
 
  
-    if (!is_active) {
-        return (
-            <>
-                <div className="container">
-                    <div className="main-wrapper">
-                        <b> Instance not active. Transfer your playback using your Spotify app </b>
-                    </div>
-                </div>
-            </>
-        );
-    } else {   
-
     return (
         <div class="parent">
             <div class="div1"></div>
             <div class="div2">
                 <div class="cassette-area">
                 <div id="cassette-casing">
-                    <div id="cassette-anim-spot"c>
+                    <div id="cassette-anim-spot">
                          <img src={cassette} alt="" className="w-5/6 h-5/6 relative place-self-center"/>  
                     </div>
                 </div>
@@ -489,5 +477,5 @@ export default function CassetteDisplay({ token, listOfSongs }) {
                 </div>
             </div>
             </div> 
-    ); }
+    ); 
 }
