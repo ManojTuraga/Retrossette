@@ -54,6 +54,8 @@ import { SOCKET } from '../components/socket';
 // Import the review form
 import ReviewForm from '../components/ratings';
 
+import CassetteDisplay from '../components/casetteDisplay';
+
 /*******************************************************************************
 PROCEDURES
 *******************************************************************************/
@@ -134,20 +136,21 @@ function PlayMusic() {
 
     // Define the rendering behavior for this component
     return (
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-        { /* Wait until the the player is logged in before rending the player */ }
-	    { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> }
-	    <div>
-		<h1>Song Review</h1>
+        <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <CassetteDisplay token={authToken} listOfSongs={listOfSongs}/>
+        { /* <div style={{display: 'flex', flexDirection: 'column'}}>
+        { /* Wait until the the player is logged in before rending the player  }
+	    { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> } */ }
+	    
+		{ /* <h1>Song Review</h1>
 		<ReviewForm
 		    rating={rating}
 		    setRating={setRating}
 		    comment={comment}
 		    setComment={setComment}
 		    onSubmit={handleReviewSubmit}
-		/>
+		/> */ }
 	    </div>
-	</div>
     );
 }
 
