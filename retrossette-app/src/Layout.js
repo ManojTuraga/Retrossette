@@ -60,36 +60,33 @@ PROCEDURES
 
 /* This function is responsible for initializing the layout
     of the entire application */
-function Layout( { profileName, profileImage } )
-    {
+function Layout({ profileName, profileImage }) {
     // If there is no profile image provided, render with the default 
     // profile image
-    if( profileImage == null )
-        {
+    if (profileImage == null) {
         return (
-                <>  
-                    <Navbar ProfileName={ profileName } ProfileImage={logo}/>
-                    <main>
-                        <Outlet/>
-                    </main>
-                </>
-            )  
-        }
-    // If a profile image has been provide, render with that instead
-    else
-        {
-            return (
-                <>  
-                    <Navbar ProfileName={ profileName } ProfileImage={profileImage}/>
-                    <main>
-                        <Outlet/>
-                    </main>
-                </>
-            )  
-        }
-
-     
+            <>
+                <Navbar ProfileName={profileName} ProfileImage={logo} />
+                <main>
+                    <Outlet />
+                </main>
+            </>
+        )
     }
+    // If a profile image has been provide, render with that instead
+    else {
+        return (
+            <>
+                <Navbar ProfileName={profileName} ProfileImage={profileImage} />
+                <main>
+                    <Outlet />
+                </main>
+            </>
+        )
+    }
+
+
+}
 
 // Export the layout function
 export default Layout;

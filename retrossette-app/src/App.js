@@ -68,55 +68,48 @@ PROCEDURES
 /**
  * This function defines the rendering behavior of the app component
  */
-function App()
-    {
+function App() {
     // Define a state variable for socket connection state
-    const [ isConnected, setIsConnected ] = useState( SOCKET.connected );
-    const [ profileName, setProfileName ] = useState( '' );
-    const [ profileImage, setProfileImage ] = useState( '' );
+    const [isConnected, setIsConnected] = useState(SOCKET.connected);
+    const [profileName, setProfileName] = useState('');
+    const [profileImage, setProfileImage] = useState('');
 
     // This is a local function that updates the
     // local storage when a playlist is selected
-    function handlePlaylistSelected( id )
-        {
+    function handlePlaylistSelected(id) {
         window.location.href = `/PlayMusic?id=${id}`;
-        }
+    }
 
     // The is the side effect behavior for this component.
     // This side effect will initialize the connection behavior
     // for the socket
-    useEffect( () => 
-        {
+    useEffect(() => {
         // Local function for socket connection
-        function onConnected()
-            {
-            setIsConnected( true );
-            }
+        function onConnected() {
+            setIsConnected(true);
+        }
 
         // Local function for socket disconnection
-        function onDisconnected()
-            {
-            setIsConnected( false );
-            }
-        
+        function onDisconnected() {
+            setIsConnected(false);
+        }
+
         // Set the function objects for the socket on
         // connection/disconnection
-        SOCKET.on( 'connect', onConnected );
-        SOCKET.on( 'disconnect', onDisconnected );
-        
-        return () =>
-            {
-            SOCKET.off( 'connect', onConnected );
-            SOCKET.off( 'disconnect', onDisconnected );
-            }
-        } )
+        SOCKET.on('connect', onConnected);
+        SOCKET.on('disconnect', onDisconnected);
 
-    SOCKET.emit( "/api/get_profile_information", {}, ( response ) =>
-        {
-        setProfileName( response[ "message" ][ "profile_name" ] );
-        setProfileImage( response[ "message" ][ "profile_image" ] );
-        } )
-    
+        return () => {
+            SOCKET.off('connect', onConnected);
+            SOCKET.off('disconnect', onDisconnected);
+        }
+    })
+
+    SOCKET.emit("/api/get_profile_information", {}, (response) => {
+        setProfileName(response["message"]["profile_name"]);
+        setProfileImage(response["message"]["profile_image"]);
+    })
+
     // Render the page to route each required componenet to it's
     // corresponding URL. Right now the only required componenets
     // are the CreatePlaylist page, the ViewPlaylists page, and the
@@ -125,23 +118,23 @@ function App()
     //NOTE: THE TEST ROUTE SHOULD BE DELETED, THIS IS JUST A PROOF
     // OF CONCEPT
     return (
-            <Router>
-                <Routes>
-                    <Route element={ <Layout profileName={ profileName } profileImage={ profileImage } /> }>
-                        <Route path="" element={ <HomePage/> }></Route>
-                        <Route path="/CreatePlaylist" element={ <CreatePlaylist/> }></Route>
-                        <Route path="/ViewPlaylists" element={ <ViewPlaylists handlePlaylistSelected={ handlePlaylistSelected }/> }></Route>
-                        <Route path="/PlayMusic" element={ <PlayMusic/> }></Route>
-                        <Route path="/TestThemes" element={ <TestThemes/> }></Route>
-                        <Route path="/GetRecommendation" element={ <GetRecommendation/> }></Route>
-                    </Route>
-                </Routes>
-            </Router>
-            // <>
-            // <Boombox/>
-            // </>
-        );
-    }
+        <Router>
+            <Routes>
+                <Route element={<Layout profileName={profileName} profileImage={profileImage} />}>
+                    <Route path="" element={<HomePage />}></Route>
+                    <Route path="/CreatePlaylist" element={<CreatePlaylist />}></Route>
+                    <Route path="/ViewPlaylists" element={<ViewPlaylists handlePlaylistSelected={handlePlaylistSelected} />}></Route>
+                    <Route path="/PlayMusic" element={<PlayMusic />}></Route>
+                    <Route path="/TestThemes" element={<TestThemes />}></Route>
+                    <Route path="/GetRecommendation" element={<GetRecommendation />}></Route>
+                </Route>
+            </Routes>
+        </Router>
+        // <>
+        // <Boombox/>
+        // </>
+    );
+}
 
 // Export just the App component
 export default App

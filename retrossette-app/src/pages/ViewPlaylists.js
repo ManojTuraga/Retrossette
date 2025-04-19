@@ -59,70 +59,68 @@ PROCEDURES
 * This function is a temporary component that allows the 
 * user to see all the playlists that are currently created
 */
-function ViewPlaylists( { handlePlaylistSelected } )
-    {
+function ViewPlaylists({ handlePlaylistSelected }) {
     // Create a state variable to store the list of playlists
-    const [ listOfPlaylists, setListOfPlaylists ] = useState([]);
+    const [listOfPlaylists, setListOfPlaylists] = useState([]);
 
     // Create a state variable for if the popup is open
-    const [ isPopupOpen, setIsPopupOpen ] = useState( false );
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     // Create a state variable for the name of the playlist
-    const [ selectedName, setSelectedName ] = useState( "" );
+    const [selectedName, setSelectedName] = useState("");
 
     // Create a state variable for the id of the playlist
-    const [ selectedId, setSelectedId ] = useState( 0 );
+    const [selectedId, setSelectedId] = useState(0);
 
     // Request a list of playlists from the server
-    SOCKET.emit( "/api/get_playlists", {}, ( response ) => setListOfPlaylists( response[ "message" ] ) )
+    SOCKET.emit("/api/get_playlists", {}, (response) => setListOfPlaylists(response["message"]))
 
     // Define a a local function that will define the behavior of
     // opening the popup
-    function handlePopupOpen( name, playlist_id )
-        {
+    function handlePopupOpen(name, playlist_id) {
         // Declare the that the popup should be opened
-        setIsPopupOpen( true );
+        setIsPopupOpen(true);
 
         // Set the name of the selected playlist
-        setSelectedName( name );
+        setSelectedName(name);
 
         // Set the ID of the selected playlist
-        setSelectedId( playlist_id )
-        }
-    
-    // Render teh componenet
-    return(
-        <div>
-        <div className="grid grid-cols-1 mx-12 pt-4">
-            <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
-                {
-                // Map every playlist to a clickable element that when clicked opens a popup
-                listOfPlaylists.map((playlist) => (
-                    <div  
-                        className="h-auto text-white aspect-square flex items-center justify-center">
-                        {/* Overlay text */}
-                        <div className="relative w-full h-full flex items-center justify-center">
-                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" onClick={() => handlePopupOpen( playlist.name, playlist.id )} />
-                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
-                        </div>
-                    </div>
+        setSelectedId(playlist_id)
+    }
 
-                ))
-                }
-            </div> 
-        </div>
-        {/* Define a popup that when opened will show the playlist name and a button to be able to play the music */}
-        <Popup
-            isOpen={isPopupOpen}
-            onClose={()=>setIsPopupOpen( false )}
-            className='text-center'
-        >
-            <h1>Cassette Name: { selectedName }</h1>
-            <Button onClick={()=>handlePlaylistSelected( selectedId )}>Play Cassette</Button>
-        </Popup>
+    // Render teh componenet
+    return (
+        <div>
+            <div className="grid grid-cols-1 mx-12 pt-4">
+                <div className="h-full grid gap-4 items-center 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2">
+                    {
+                        // Map every playlist to a clickable element that when clicked opens a popup
+                        listOfPlaylists.map((playlist) => (
+                            <div
+                                className="h-auto text-white aspect-square flex items-center justify-center">
+                                {/* Overlay text */}
+                                <div className="relative w-full h-full flex items-center justify-center">
+                                    <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" onClick={() => handlePopupOpen(playlist.name, playlist.id)} />
+                                    <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                                </div>
+                            </div>
+
+                        ))
+                    }
+                </div>
+            </div>
+            {/* Define a popup that when opened will show the playlist name and a button to be able to play the music */}
+            <Popup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                className='text-center'
+            >
+                <h1>Cassette Name: {selectedName}</h1>
+                <Button onClick={() => handlePlaylistSelected(selectedId)}>Play Cassette</Button>
+            </Popup>
         </div>
     )
-    }
+}
 
 // Export the componenet
 export default ViewPlaylists;

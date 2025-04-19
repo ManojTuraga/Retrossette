@@ -43,4 +43,4 @@ import { io } from 'socket.io-client'
 const URL = process.env.SERVER_URL;
 
 // Export a Socket created from the URL
-export const SOCKET = io( URL )
+export const SOCKET = io(URL)

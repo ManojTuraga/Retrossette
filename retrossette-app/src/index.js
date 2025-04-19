@@ -59,8 +59,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 // Have the dom object render the main application
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 );
 

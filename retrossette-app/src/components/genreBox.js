@@ -43,73 +43,71 @@ import static_img from '../images/static.png'
 import active_img from '../images/active.gif'
 
 // Import the card, popup, and button components from the retroui library
-import {Card, Popup, Button} from 'pixel-retroui'
+import { Card, Popup, Button } from 'pixel-retroui'
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
 
 /* This function defines the rendering behavior of the GenreBox */
-export default function GenreBox({Genre, CassetteNames})
-    {
+export default function GenreBox({ Genre, CassetteNames }) {
     // This function deifnes the behavior for when an image is clicked
     // on the page
-    function handlePlaylistSelected( name, id )
-        {
+    function handlePlaylistSelected(name, id) {
         // Indicate that the popup should be opened
-        setIsPopupOpen( true );
+        setIsPopupOpen(true);
 
         // Set the name of the playlist 
-        setSelectedName( name );
+        setSelectedName(name);
 
         // Set the ID of the playlist
-        setSelectedID( id )
-        }
-        
-        // Define a state variable for when the playlist is open
-        const [isPopupOpen, setIsPopupOpen] = useState(false);
+        setSelectedID(id)
+    }
 
-        // Define a state variable for the name of the playlist
-        const [selectedName, setSelectedName] = useState("");
+    // Define a state variable for when the playlist is open
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-        // Define a state variable for the id of the playlist
-        const [selectedID, setSelectedID] = useState(0);
-        
-        // Define the rendering behavior of this componenet
-        return (
-            <>
-            { /* Make the card a grid that automatically handles overflow */ }
+    // Define a state variable for the name of the playlist
+    const [selectedName, setSelectedName] = useState("");
+
+    // Define a state variable for the id of the playlist
+    const [selectedID, setSelectedID] = useState(0);
+
+    // Define the rendering behavior of this componenet
+    return (
+        <>
+            { /* Make the card a grid that automatically handles overflow */}
             <Card className="col-span-1 overflow-y-auto scrollbar-hide p-4 h-[60vh]">
-                { /* Create a div inside the card to allow for padding */ }
-                    <div className="grid sm:grid-cols-1 md:grid-cols-2 content-start gap-4">
-                        { /* Output the genre name */ }
-                        <div className="col-span-full text-2xl">{Genre}</div>
-                        {
+                { /* Create a div inside the card to allow for padding */}
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 content-start gap-4">
+                    { /* Output the genre name */}
+                    <div className="col-span-full text-2xl">{Genre}</div>
+                    {
                         /* Create a clickable element that allows users to play music */
-                        CassetteNames.map( ( playlist ) =>(
+                        CassetteNames.map((playlist) => (
                             <div className="h-auto text-white aspect-square">
 
-                        <div className="relative w-full h-full flex items-center justify-center">
-                                <img onClick={ () => handlePlaylistSelected( playlist[ "name" ], playlist[ "id" ] ) } className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
-                                <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                                <div className="relative w-full h-full flex items-center justify-center">
+                                    <img onClick={() => handlePlaylistSelected(playlist["name"], playlist["id"])} className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                                    <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                                </div>
                             </div>
-                            </div>
-                        ) )
-                        }
-                    </div>
+                        ))
+                    }
+                </div>
             </Card>
             { /* Create a popup that is triggered when a clickable element on the page is clicked
                  , showing the name of the cassette and allows the user to redirect to it */ }
             <Popup
-            isOpen={isPopupOpen}
-            onClose={()=>setIsPopupOpen( false )}
-            className='text-center'
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                className='text-center'
             >
                 <h1>Cassette Name: {selectedName}</h1>
-                <Button onClick={()=>{window.location.href = `/PlayMusic?id=${selectedID}`;}}>Play Cassette</Button>
+                <Button onClick={() => { window.location.href = `/PlayMusic?id=${selectedID}`; }}>Play Cassette</Button>
             </Popup>
-            </>
-        );
-    }
+        </>
+    );
+}
 
 
 
