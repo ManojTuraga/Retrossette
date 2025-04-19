@@ -131,7 +131,7 @@ function PlayMusic() {
     // Define the rendering behavior for this component
     return (
         <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
-            <CassetteDisplay token={authToken} listOfSongs={listOfSongs} />
+            <CassetteDisplay token={authToken} listOfSongs={listOfSongs} rating={rating} setRating={setRating} comment={comment} setComment={setComment} onSubmit={handleReviewSubmit}/>
             { /* <div style={{display: 'flex', flexDirection: 'column'}}>
         { /* Wait until the the player is logged in before rending the player  }
 	    { ( authToken === '' ) ? <h1>Logging in</h1> : <SpotifyPlayer token={authToken} listOfSongs={listOfSongs}/> } */ }

@@ -7,6 +7,8 @@
     "lodash": "^4.17.21",
     "neo-retro-ui": "^0.5.3",
     "pixel-retroui": "^2.1.0",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",

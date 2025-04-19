@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import "../css/CassettePlayer.css"
 
 import cassette from '../images/active.gif'
+
+import { Card, ProgressBar, Button, Popup, TextArea } from 'pixel-retroui'
+
+// Import the cassette buttons
+import { FaPlay, FaPause, FaFastForward, FaFastBackward } from "react-icons/fa";
 
 
 // Sleep for ms milliseconds
@@ -112,7 +117,7 @@ function printTime(time) {
     return `${hours}:${minutes}:${seconds}:${ms}`;
 }
 
-export default function CassetteDisplay({ token, listOfSongs }) {
+export default function CassetteDisplay({ token, listOfSongs, rating, setRating, comment, setComment, onSubmit }) {
     // Set state variable for controlling pause state
     const [is_paused, setPaused] = useState(false);
 
@@ -150,6 +155,51 @@ export default function CassetteDisplay({ token, listOfSongs }) {
 
     // Determines how fast rewind or fast forward is
     const speedupFactor = 4;
+
+    const [rotation, setRotation] = useState(0);
+    const circleRef = useRef(null);
+
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    
+
+    const getAngle = (x, y) => {
+        const rect = circleRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const deltaX = x - centerX;
+        const deltaY = y - centerY;
+
+        const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI); // Convert radians to degrees
+        return angle;
+    };
+
+    const handleMouseDown = (e) => {
+        const initialAngle = getAngle(e.clientX, e.clientY);
+        circleRef.current.dataset.initialAngle = initialAngle; // Store the initial angle
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleMouseMove = (e) => {
+        const initialAngle = parseFloat(circleRef.current.dataset.initialAngle);
+        const currentAngle = getAngle(e.clientX, e.clientY);
+        let deltaAngle = currentAngle - initialAngle;
+
+        // Ensure continuity in rotation:
+        if (deltaAngle > 180) deltaAngle -= 360; // Adjust for clockwise wraparound
+        if (deltaAngle < -180) deltaAngle += 360; // Adjust for counterclockwise wraparound
+
+        setRotation((prevRotation) => prevRotation + deltaAngle);
+        circleRef.current.dataset.initialAngle = currentAngle; // Update the initial angle
+    };
+
+    const handleMouseUp = () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        circleRef.current.dataset.initialAngle = null; // Reset initial angle
+    };
+
 
     // Controlls what happens when fast forwarding and rewinding is happening
     // and also changes the state of the player when finished
@@ -372,20 +422,20 @@ export default function CassetteDisplay({ token, listOfSongs }) {
 
 
     return (
-        <div class="parent">
+        <Card className="parent">
             <div class="div1"></div>
             <div class="div2">
                 <div class="cassette-area">
-                    <div id="cassette-casing">
+                    <Card id="cassette-casing" className="bg-transparent">
                         <div id="cassette-anim-spot">
                             <img src={cassette} alt="" className="w-5/6 h-5/6 relative place-self-center" />
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
             <div class="div3">
                 <div class="db-meter-flex-container">
-                    <div class="db-components-flex-container">
+                    <Card className="db-components-flex-container bg-transparent">
                         <div class="db-meter-area">
                             <div class="timer-container">
                                 <div class="timer-grid">
@@ -406,7 +456,7 @@ export default function CassetteDisplay({ token, listOfSongs }) {
                             </div>
                             <div class="db-meter-2"></div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
             <div class="div4">
@@ -414,7 +464,7 @@ export default function CassetteDisplay({ token, listOfSongs }) {
                     <div class="volume-inner-area">
                         <div id="volume-text">Volume</div>
                         <div id="volume-knob">
-                            <div id="volume-knob-circle">
+                            <div id="volume-knob-circle" ref={circleRef} onMouseDown={handleMouseDown} style={{ transform: `rotate(${rotation}deg)` }}>
                             </div>
                         </div>
                     </div>
@@ -424,7 +474,7 @@ export default function CassetteDisplay({ token, listOfSongs }) {
             <div class="div6">
                 <div class="power-area">
                     <div id="power-text">Power</div>
-                    <div id="power-button"></div>
+                    <Button id="power-button"></Button>
                 </div>
             </div>
             <div class="div7">
@@ -434,50 +484,68 @@ export default function CassetteDisplay({ token, listOfSongs }) {
                             <div id="rewind-text">
                                 Rewind
                             </div>
-                            <div id="rewind-button" onClick={() => { pressCassetteButton('rewind', player); }}>
-
-                            </div>
+                            <Button id="rewind-button" onClick={() => { pressCassetteButton('rewind', player); }}><FaFastBackward /></Button>
                         </div>
                         <div class="fast-foward-area">
                             <div id="fast-foward-text">
                                 FF
                             </div>
-                            <div id="fast-foward-button" onClick={() => { pressCassetteButton('fastforward', player); }}></div>
+                            <Button id="fast-foward-button" onClick={() => { pressCassetteButton('fastforward', player); }}><FaFastForward /></Button>
                         </div>
                         <div class="play-area">
                             <div id="play-text">
                                 Play
                             </div>
-                            <div id="play-button"></div>
+                            <Button id="play-button"><FaPlay /></Button>
                         </div>
                         <div class="pause-area">
                             <div id="pause-text">
                                 Pause
                             </div>
-                            <div id="pause-button" onClick={() => { pressCassetteButton('playpause', player); }}></div>
+                            <Button id="pause-button" onClick={() => { pressCassetteButton('playpause', player); }}><FaPause /></Button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="div8">
                 <div class="time-left-bar-container">
-                    <div id="time-left-bar">
-                        <div id="time-left-inner-bar"></div>
-                    </div>
+                    <ProgressBar className='bg-transparent' progress={50}></ProgressBar>
                 </div>
             </div>
             <div class="div9">
                 <div class="share-container">
-                    <div id="share-button">Share</div>
+                    <Button id="share-button" onClick={() => setIsPopupOpen(true)}>Share</Button>
                 </div>
             </div>
             <div class="div10">
                 <div class="song-container">
                     <div id="song-button">
-
                     </div>
                 </div>
             </div>
-        </div>
+            <Popup
+                isOpen={isPopupOpen}
+                onClose={() => setIsPopupOpen(false)}
+                className='text-center'
+            >
+                <h1>Playlist Link: {window.location.href}</h1>
+                <h1>Rate: {[...Array(5)].map((_, index) => (
+                    <span
+                        key={index}
+                        style={{
+                            cursor: "pointer",
+                            color: index < rating ? "gold" : "gray",
+                            fontSize: "24px",
+                        }}
+                        onClick={() => setRating(index + 1)}
+                    >
+                        ★
+                    </span>
+                ))}</h1>
+                <h1>Leave a Comment!</h1>
+                <TextArea style={{resize: "vertical"}} onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Enter your comment here...'/>
+                <Button onClick={()=>{onSubmit( rating, comment ); alert("Review submitted! Thank you.");}} >Submit</Button>   
+            </Popup>
+        </Card>
     );
 }
