@@ -160,7 +160,9 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     const circleRef = useRef(null);
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    
+
+    const [powerOn, setPowerOn] = useState(false);
+
 
     const getAngle = (x, y) => {
         const rect = circleRef.current.getBoundingClientRect();
@@ -302,11 +304,21 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         button_sfx.play();
 
         // Controls state based on what button was pressed
-        if (button === 'playpause') {
+        if (button === 'play' && is_paused) {
+
             sleep(buttonWait).then(() => {
                 player.togglePlay();
                 setRewind(false);
                 setFastForward(false);
+                setPaused(!is_paused);
+            });
+        }
+        else if (button === 'pause' && !is_paused) {
+            sleep(buttonWait).then(() => {
+                player.togglePlay();
+                setRewind(false);
+                setFastForward(false);
+                setPaused(!is_paused);
             });
         } else if (button === 'rewind') {
             is_rewinding ? setRewind(false) : setRewind(true);
@@ -474,7 +486,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             <div class="div6">
                 <div class="power-area">
                     <div id="power-text">Power</div>
-                    <Button id="power-button"></Button>
+                    <Button id="power-button" onClick={() => setPowerOn(!powerOn)} bg={powerOn ? '#c6005c' : ''}></Button>
                 </div>
             </div>
             <div class="div7">
@@ -484,25 +496,25 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                             <div id="rewind-text">
                                 Rewind
                             </div>
-                            <Button id="rewind-button" onClick={() => { pressCassetteButton('rewind', player); }}><FaFastBackward /></Button>
+                            <Button className="flex items-center justify-center" id="rewind-button" onClick={() => { pressCassetteButton('rewind', player); }}><FaFastBackward className='className="mr-2 text-4xl' /></Button>
                         </div>
                         <div class="fast-foward-area">
                             <div id="fast-foward-text">
                                 FF
                             </div>
-                            <Button id="fast-foward-button" onClick={() => { pressCassetteButton('fastforward', player); }}><FaFastForward /></Button>
+                            <Button className="flex items-center justify-center" id="fast-foward-button" onClick={() => { pressCassetteButton('fastforward', player); }}><FaFastForward className='className="mr-2 text-4xl' /></Button>
                         </div>
                         <div class="play-area">
                             <div id="play-text">
                                 Play
                             </div>
-                            <Button id="play-button"><FaPlay /></Button>
+                            <Button className="flex items-center justify-center" id="play-button" bg={is_paused ? '' : '#00BCD4'} onClick={() => { pressCassetteButton('play', player); }}><FaPlay className='className="mr-2 text-4xl' /></Button>
                         </div>
                         <div class="pause-area">
                             <div id="pause-text">
                                 Pause
                             </div>
-                            <Button id="pause-button" onClick={() => { pressCassetteButton('playpause', player); }}><FaPause /></Button>
+                            <Button className="flex items-center justify-center" id="pause-button" bg={is_paused ? '#00BCD4' : ''} onClick={() => { pressCassetteButton('pause', player); }}><FaPause className='mr-2 text-4xl' /></Button>
                         </div>
                     </div>
                 </div>
@@ -543,8 +555,9 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                     </span>
                 ))}</h1>
                 <h1>Leave a Comment!</h1>
-                <TextArea style={{resize: "vertical"}} onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Enter your comment here...'/>
-                <Button onClick={()=>{onSubmit( rating, comment ); alert("Review submitted! Thank you.");}} >Submit</Button>   
+                <br />
+                <TextArea style={{ resize: "vertical" }} onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Enter your comment here...' />
+                <Button onClick={() => { onSubmit(rating, comment); alert("Review submitted! Thank you."); }} >Submit</Button>
             </Popup>
         </Card>
     );
