@@ -165,6 +165,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
 
     const [volume, setVolume] = useState(0.5);
 
+    const [progress, setProgress] = useState(0); // Progress as a percentage
 
     const getAngle = (x, y) => {
         const rect = circleRef.current.getBoundingClientRect();
@@ -471,6 +472,26 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             }
     }, [volume])
 
+    useEffect(() => {
+        let interval;
+
+        const updateProgress = async () => {
+            const state = await player.getCurrentState();
+            if (state) {
+                const progressPercentage = (state['position'] / totalCassetteLength) * 100;
+                setProgress(progressPercentage);
+            }
+        };
+
+        // Start updating progress every 500ms
+        interval = setInterval(updateProgress, 500);
+
+        return () => {
+            // Clean up the timer when the component unmounts
+            clearInterval(interval);
+        };
+    }, [player, totalCassetteLength]);
+
     return (
         <Card className="parent">
             <div class="div1"></div>
@@ -559,7 +580,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             </div>
             <div class="div8">
                 <div class="time-left-bar-container">
-                    <ProgressBar className='bg-transparent' progress={50}></ProgressBar>
+                    <ProgressBar className='bg-transparent' progress={progress}></ProgressBar>
                 </div>
             </div>
             <div class="div9">
