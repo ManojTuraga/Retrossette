@@ -156,12 +156,14 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     // Determines how fast rewind or fast forward is
     const speedupFactor = 4;
 
-    const [rotation, setRotation] = useState(0);
+    const [rotation, setRotation] = useState(180);
     const circleRef = useRef(null);
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     const [powerOn, setPowerOn] = useState(false);
+
+    const [volume, setVolume] = useState(0.5);
 
 
     const getAngle = (x, y) => {
@@ -192,9 +194,21 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         if (deltaAngle > 180) deltaAngle -= 360; // Adjust for clockwise wraparound
         if (deltaAngle < -180) deltaAngle += 360; // Adjust for counterclockwise wraparound
 
-        setRotation((prevRotation) => prevRotation + deltaAngle);
+        setRotation((prevRotation) => {
+            let newRotation = prevRotation + deltaAngle;
+
+            // Prevent rotation from exceeding 360 degrees or dropping below 0
+            if (newRotation >= 360) newRotation =  360;
+            if (newRotation <= 0) newRotation = 0;
+            
+            setVolume( newRotation / 360 );
+
+            return newRotation;
+        });
+
         circleRef.current.dataset.initialAngle = currentAngle; // Update the initial angle
     };
+
 
     const handleMouseUp = () => {
         document.removeEventListener("mousemove", handleMouseMove);
@@ -321,9 +335,24 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 setPaused(!is_paused);
             });
         } else if (button === 'rewind') {
-            is_rewinding ? setRewind(false) : setRewind(true);
+            sleep(buttonWait).then(() => {
+                if (!is_paused) {
+                    player.togglePlay();
+                }
+                setRewind(!is_rewinding);
+                setFastForward(false);
+                setPaused(true);
+            });
+
         } else if (button === 'fastforward') {
-            is_fast_forwarding ? setFastForward(false) : setFastForward(true);
+            sleep(buttonWait).then(() => {
+                if (!is_paused) {
+                    player.togglePlay();
+                }
+                setRewind(false);
+                setFastForward(!is_fast_forwarding);
+                setPaused(true);
+            });
         }
     }
 
@@ -341,7 +370,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             const player = new window.Spotify.Player({
                 name: 'Web Playback SDK',
                 getOAuthToken: cb => { cb(token); },
-                volume: 0.5
+                volume: volume
             });
 
             // Set player as the active player
@@ -394,6 +423,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             }).then(response => {
                 if (response.ok) {
                     console.log('Playback transferred successfully');
+                    setActive(true);
                 } else {
                     console.error('Failed to transfer playback');
                 }
@@ -431,7 +461,15 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         console.log(`Current Cassette Length: ${printTime(cassetteLength)}`);
     }, [songList]);
 
-
+    useEffect(() => {
+        if( player )
+            {
+            player.setVolume( volume ).then(() =>
+                {
+                    console.log( volume );
+                })
+            }
+    }, [volume])
 
     return (
         <Card className="parent">
@@ -486,7 +524,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             <div class="div6">
                 <div class="power-area">
                     <div id="power-text">Power</div>
-                    <Button id="power-button" onClick={() => setPowerOn(!powerOn)} bg={powerOn ? '#c6005c' : ''}></Button>
+                    <Card id="power-button" bg={is_active ? '#E4080A' : ''}></Card>
                 </div>
             </div>
             <div class="div7">
@@ -496,13 +534,13 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                             <div id="rewind-text">
                                 Rewind
                             </div>
-                            <Button className="flex items-center justify-center" id="rewind-button" onClick={() => { pressCassetteButton('rewind', player); }}><FaFastBackward className='className="mr-2 text-4xl' /></Button>
+                            <Button className="flex items-center justify-center" id="rewind-button" bg={is_rewinding ? '#c6005c' : ''} onClick={() => { pressCassetteButton('rewind', player); }}><FaFastBackward className='className="mr-2 text-4xl' /></Button>
                         </div>
                         <div class="fast-foward-area">
                             <div id="fast-foward-text">
                                 FF
                             </div>
-                            <Button className="flex items-center justify-center" id="fast-foward-button" onClick={() => { pressCassetteButton('fastforward', player); }}><FaFastForward className='className="mr-2 text-4xl' /></Button>
+                            <Button className="flex items-center justify-center" id="fast-foward-button" bg={is_fast_forwarding ? '#c6005c' : ''} onClick={() => { pressCassetteButton('fastforward', player); }}><FaFastForward className='className="mr-2 text-4xl' /></Button>
                         </div>
                         <div class="play-area">
                             <div id="play-text">
