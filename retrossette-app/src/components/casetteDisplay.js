@@ -47,21 +47,14 @@ function getTotalCassetteLength(songList) {
 // Get the absolute position in ms in a current cassette with list of songs
 // songList playing current song current_song_uri, and the current position
 // in ms in the current song
-function getAbsolutePosition(songList, current_song_uri, current_position) {
+function getAbsolutePosition(track_window, current_position) {
     let pos = 0;
 
-    for (let track of songList) {
-        if (current_song_uri === track['uri'].slice(14)) {
-            // If the current track is the current song playing, add and
-            // return the current position
-            pos += current_position;
-            break;
-        } else {
-            // Otherwise just add the length of the whole song
-            pos += track['duration_ms'];
-        }
+    for (let track of track_window["previous_tracks"]) {
+        pos += track['duration_ms'];
     }
 
+    pos += current_position;
     return pos;
 }
 
@@ -71,37 +64,33 @@ function getRelativePosition(songList, absolute_position, totalCassetteLength) {
     let current_song_uri = '';
     let current_position = 0;
     let pos = absolute_position;
+    let song_index = 0;
 
     // Check if position is in bounds and just reset cassette if not
     if ((absolute_position <= 0) ||
         (absolute_position >= totalCassetteLength)) {
-        return [songList[0]['uri'], 0];
+        return [0, songList[0]['uri'], 0];
     }
 
     // Go through songs until reach the current song from the absolute position
-    for (let track of songList) {
-        if (pos < track['duration_ms']) {
-            current_song_uri = track['uri'];
+    for (let i = 0; i < songList.length; i++) {
+        if (pos < songList[i]['duration_ms']) {
+            current_song_uri = songList[i]['uri'];
             current_position = pos;
+            song_index = i
             break;
         } else {
-            pos -= track['duration_ms'];
+            pos -= songList[i]['duration_ms'];
         }
     }
 
-    return [current_song_uri.slice(14), current_position];
+    return [song_index, current_song_uri.slice(14), current_position];
 }
 
 // Given a song URI in a song list songList get the index of the song in
 // the list
-function uriToTrackIndex(songList, uri) {
-    for (const [index, track] of songList.entries()) {
-        if (uri === track['uri'].slice(14)) {
-            return index;
-        }
-    }
-
-    return 0;
+function uriToTrackIndex(track_window) {
+    return track_window["previous_tracks"].length
 }
 
 // Debugging function for pretty print of time in ms
@@ -199,10 +188,10 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             let newRotation = prevRotation + deltaAngle;
 
             // Prevent rotation from exceeding 360 degrees or dropping below 0
-            if (newRotation >= 360) newRotation =  360;
+            if (newRotation >= 360) newRotation = 360;
             if (newRotation <= 0) newRotation = 0;
-            
-            setVolume( newRotation / 360 );
+
+            setVolume(newRotation / 360);
 
             return newRotation;
         });
@@ -247,6 +236,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
 
             let current_song_uri = '';
             let relative_pos = 0;
+            let curr_track_window = [];
 
             // Get the current state before the button was held
             player.getCurrentState().then(state => {
@@ -255,13 +245,14 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                     current_song_uri = state['track_window']['current_track']['uri'].slice(14);
                     relative_pos = state['position'];
                     console.log(state);
+                    curr_track_window = state["track_window"]
                 }
 
                 console.log(relative_pos);
 
                 // Get absolute position and index before the button was held
-                let current_index = uriToTrackIndex(songList, current_song_uri);
-                let pos = getAbsolutePosition(songList, current_song_uri, relative_pos);
+                let current_index = uriToTrackIndex(curr_track_window, current_song_uri);
+                let pos = getAbsolutePosition(curr_track_window, relative_pos);
 
                 console.log(`Current relative pos: ${printTime(relative_pos)} at index ${current_index}`);
                 console.log(`Absolute pos: ${printTime(pos)}`);
@@ -271,11 +262,11 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
 
                 // Calculate new relative position
                 let new_pos = getRelativePosition(songList, pos, totalCassetteLength);
-                current_song_uri = new_pos[0];
-                setRelativePos(new_pos[1]);
+                current_song_uri = new_pos[1];
+                setRelativePos(new_pos[2]);
 
                 // Calculate new index
-                let new_index = uriToTrackIndex(songList, current_song_uri);
+                let new_index = new_pos[0];
                 setOffset(new_index);
 
                 console.log(`New pos: ${printTime(relative_pos)} at index ${new_index}`)
@@ -463,13 +454,11 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     }, [songList]);
 
     useEffect(() => {
-        if( player )
-            {
-            player.setVolume( volume ).then(() =>
-                {
-                    console.log( volume );
-                })
-            }
+        if (player) {
+            player.setVolume(volume).then(() => {
+                console.log(volume);
+            })
+        }
     }, [volume])
 
     useEffect(() => {
@@ -478,7 +467,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         const updateProgress = async () => {
             const state = await player.getCurrentState();
             if (state) {
-                const progressPercentage = (state['position'] / totalCassetteLength) * 100;
+                const progressPercentage = (getAbsolutePosition(state["track_window"], state['position']) / totalCassetteLength) * 100;
                 setProgress(progressPercentage);
             }
         };
