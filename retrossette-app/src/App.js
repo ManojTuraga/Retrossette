@@ -61,6 +61,8 @@ import GetRecommendation from './pages/GetRecommendation';
 // router dom
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 
+import { Button } from 'pixel-retroui'
+
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
@@ -118,21 +120,23 @@ function App() {
     //NOTE: THE TEST ROUTE SHOULD BE DELETED, THIS IS JUST A PROOF
     // OF CONCEPT
     return (
-        <Router>
-            <Routes>
-                <Route element={<Layout profileName={profileName} profileImage={profileImage} />}>
-                    <Route path="" element={<HomePage />}></Route>
-                    <Route path="/CreatePlaylist" element={<CreatePlaylist />}></Route>
-                    <Route path="/ViewPlaylists" element={<ViewPlaylists handlePlaylistSelected={handlePlaylistSelected} />}></Route>
-                    <Route path="/PlayMusic" element={<PlayMusic />}></Route>
-                    <Route path="/TestThemes" element={<TestThemes />}></Route>
-                    <Route path="/GetRecommendation" element={<GetRecommendation />}></Route>
-                </Route>
-            </Routes>
-        </Router>
-        // <>
-        // <Boombox/>
-        // </>
+        <>
+            <Router>
+                <Button className="fixed bottom-5 right-5 w-16 h-16 flex items-center justify-center text-2xl z-50" style={{ background: "linear-gradient(45deg, #FF82F9 5%, #FFCFFF 10%, #FFC2FD 30%, #FFA1FC 50%, #FFC2FD 70%, #FFCFFF 80%, #FF82F9 95%)",}} borderColor='#ffffff'>
+                    ?
+                </Button>
+                <Routes>
+                    <Route element={<Layout profileName={profileName} profileImage={profileImage} />}>
+                        <Route path="" element={<HomePage />}></Route>
+                        <Route path="/CreatePlaylist" element={<CreatePlaylist />}></Route>
+                        <Route path="/ViewPlaylists" element={<ViewPlaylists handlePlaylistSelected={handlePlaylistSelected} />}></Route>
+                        <Route path="/PlayMusic" element={<PlayMusic />}></Route>
+                        <Route path="/TestThemes" element={<TestThemes />}></Route>
+                        <Route path="/GetRecommendation" element={<GetRecommendation />}></Route>
+                    </Route>
+                </Routes>
+            </Router>
+        </>
     );
 }
 
