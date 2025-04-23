@@ -201,6 +201,12 @@ def api_get_recommendation( data ):
 @socketio.on( "/api/get_cassette_by_genre" )
 def api_get_cassette_by_genre( data ):
     return { "status" : "success", "message" : retrossette_db_queries.get_cassettes_in_genre( data[ "id" ] ) }
+
+# This is an api endpoint that will get the most popular song
+# at any given time
+@socketio.on( "/api/get_most_popular" )
+def api_get_cassette_by_genre( data ):
+    return { "status" : "success", "message" : retrossette_db_queries.get_most_popular() }
         
 ###############################################################################
 # CLIENT ROUTES

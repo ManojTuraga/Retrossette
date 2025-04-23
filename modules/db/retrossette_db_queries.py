@@ -113,6 +113,33 @@ def get_genres():
     
     return result
 
+def get_most_popular():
+    """
+    Function: Get Genres from Database
+
+    Description: This function queries the database for all the genres that
+                 are configured in the database. All of the genres are sourced
+                 from the genres.json file
+    """
+    # Get all the information regarding genres from the genre table
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT playlist_id, playlist_name 
+        FROM playlist NATURAL JOIN listens_to
+        GROUP BY playlist_id
+        ORDER BY SUM(num_of_listens)
+        LIMIT 5;
+        """, 
+        has_return=True
+    )
+
+    # Convert the result from a list of tuples into a list of
+    # of dictionaries. This is because we will be return
+    # the result of this function
+    result = [ { "name" : n, "id" : i } for i, n in result ]
+    
+    return result
+
 def get_cassettes_in_genre( genre_id ):
     """
     Function: Get Genres from Database
