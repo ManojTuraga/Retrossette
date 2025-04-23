@@ -426,6 +426,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     useEffect(() => {
         let listOfSongURIs = [];
 
+
         for (let URI of listOfSongs) {
             listOfSongURIs.push(URI.slice(14));
         }
@@ -437,11 +438,13 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 'Authorization': `Bearer ${token}`
             }
         }).then(response => {
+            console.log("Here");
             if (response.ok) {
                 return response.json();
             }
         }).then(json => {
             setSongList(json['tracks']);
+            console.log(json['tracks']);
         }).catch(err => {
             console.log(err);
         });
@@ -481,6 +484,18 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         };
     }, [player, totalCassetteLength]);
 
+    function Timer(is_min, n, milliseconds) {
+        const minutes = Math.floor(milliseconds / 60000).toString().padStart(2, '0');
+        const seconds = ((milliseconds % 60000) / 1000).toFixed(0).toString().padStart(2, '0');
+
+        if (is_min) {
+            return minutes[n]
+        }
+        else {
+            return seconds[n]
+        }
+    }
+
     return (
         <Card className="parent">
             <div class="div1"></div>
@@ -499,10 +514,10 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                         <div class="db-meter-area">
                             <div class="timer-container">
                                 <div class="timer-grid">
-                                    <div id="timer-digit-1">0</div>
-                                    <div id="timer-digit-2">0</div>
-                                    <div id="timer-digit-3">0</div>
-                                    <div id="timer-digit-4">0</div>
+                                    <div id="timer-digit-1">{Timer(true, 0, progress * totalCassetteLength / 100)}</div>
+                                    <div id="timer-digit-2">{Timer(true, 1, progress * totalCassetteLength / 100)}</div>
+                                    <div id="timer-digit-3">{Timer(false, 0, progress * totalCassetteLength / 100)}</div>
+                                    <div id="timer-digit-4">{Timer(false, 1, progress * totalCassetteLength / 100)}</div>
                                 </div>
                             </div>
                             <div class="timer-lights-container">
