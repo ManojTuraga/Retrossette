@@ -44,9 +44,23 @@ import active_img from '../images/active.gif'
 
 // Import the card, popup, and button components from the retroui library
 import { Card, Popup, Button } from 'pixel-retroui'
+
+// Get the button sound effect
+import ButtonSound from "../boombox_assets/button_press_sfx.mp3"
 /******************************************************************************
 PROCEDURES
 ******************************************************************************/
+// Sleep for ms milliseconds
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// This function defines the audio playback for when a button is clicked
+function ClickSound() {
+    let audio = new Audio(ButtonSound);
+    sleep(1000);
+    audio.play().catch(error => console.error("Audio play failed:", error));
+}
 
 /* This function defines the rendering behavior of the GenreBox */
 export default function GenreBox({ Genre, CassetteNames }) {
@@ -104,7 +118,7 @@ export default function GenreBox({ Genre, CassetteNames }) {
                 className='text-center'
             >
                 <h1>Cassette Name: {selectedName}</h1>
-                <Button onClick={() => { window.location.href = `/PlayMusic?id=${selectedID}`; }}>Play Cassette</Button>
+                <Button onClick={() => { ClickSound(); window.location.href = `/PlayMusic?id=${selectedID}`; }}>Play Cassette</Button>
             </Popup>
         </>
     );

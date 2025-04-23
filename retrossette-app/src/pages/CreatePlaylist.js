@@ -56,6 +56,9 @@ import cassette from '../images/active.gif'
 // Import the requiree  
 import { Card, ProgressBar, Button, Input, Popup } from "pixel-retroui"
 
+// Get the button sound effect
+import ButtonSound from "../boombox_assets/button_press_sfx.mp3"
+
 /*******************************************************************************
 VARIABLES
 *******************************************************************************/
@@ -63,9 +66,23 @@ VARIABLES
 // of a cassette (in milliseconds)
 const MAX_TIME_IN_MS = 3600000
 
+
 /*******************************************************************************
 PROCEDURES 
 *******************************************************************************/
+// Sleep for ms milliseconds
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// This function defines the audio playback for when a button is clicked
+function ClickSound() {
+    let audio = new Audio(ButtonSound);
+    sleep(1000);
+    audio.play().catch(error => console.error("Audio play failed:", error));
+}
+
+
 /*
 * This function defines the rendering behavior of the Create Playlists
 * Componenet of the page
@@ -277,7 +294,7 @@ function CreatePlaylist() {
                 <Input onChange={handlePlaylistNameChange} className="w-5/6 mx-auto block col-span-full place-self-center" placeholder="Cassette Name" />
                 <img src={cassette} alt="" className="w-5/6 mx-auto col-span-full place-self-center" />
                 <ProgressBar size="md" progress={totalDuration * 100 / MAX_TIME_IN_MS}></ProgressBar>
-                <Button onClick={addGenre}>Add a Genre</Button>
+                <Button onClick={()=>{ClickSound(); addGenre()}}>Add a Genre</Button>
 
                 <Card className="flex flex-col overflow-auto">
                     <div className="text-center mt-2">{genreAssociationValues.join(' - ')}</div>
@@ -307,7 +324,7 @@ function CreatePlaylist() {
                                 />
 
                                 <Button
-                                    onClick={() => handleDelete(index)}
+                                    onClick={() => { ClickSound(); handleDelete(index) }}
                                 >
                                     Delete
                                 </Button>
