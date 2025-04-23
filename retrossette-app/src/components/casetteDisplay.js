@@ -593,16 +593,11 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 </div>
             </div>
             <div class="div10">
-                <div class="song-container">
-                    <div id="song-button">
-                    </div>
-                </div>
             </div>
             <Popup
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
-                className='text-center'
-            >
+                className='text-center'>
                 <h1>Playlist Link: {window.location.href}</h1>
                 <h1>Rate: {[...Array(5)].map((_, index) => (
                     <span
@@ -620,7 +615,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 <h1>Leave a Comment!</h1>
                 <br />
                 <TextArea style={{ resize: "vertical" }} onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Enter your comment here...' />
-                <Button onClick={() => { onSubmit(rating, comment); alert("Review submitted! Thank you."); }} >Submit</Button>
+                <Button onClick={() => { onSubmit(rating, comment); alert("Review submitted! Thank you."); }}>Submit</Button>
             </Popup>
         </Card>
     );

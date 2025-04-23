@@ -405,20 +405,3 @@
   align-items: center;
   display: flex;
 }
-
-.song-container {
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
-
-.song-container>#song-button {
-  width: 40%;
-  aspect-ratio: 1;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  border: 2px solid #666666;
-}

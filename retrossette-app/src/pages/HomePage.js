@@ -76,7 +76,8 @@ function HomePage() {
     return (
         <div className="grid grid-cols-3 gap-4 mx-12">
 
-            <Card className="col-start-1 col-span-3 p-4 h-[calc(60vh-65px)] text-2xl">
+            <Card className="col-start-1 col-span-3 p-4 h-[calc(60vh-65px)] text-2xl" 
+            style={{ background: "linear-gradient(45deg, #999 5%, #fff 10%, #ccc 30%, #ddd 50%, #ccc 70%, #fff 80%, #999 95%)",}} borderColor='#ffffff'>
                 <h1>Most Popular</h1>
             </Card>
             {cassettesByGenre.map((genre) => (

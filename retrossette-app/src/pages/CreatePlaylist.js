@@ -272,7 +272,8 @@ function CreatePlaylist() {
     // Render the components that are required for this page
     return (
         <div className="grid grid-rows-5 grid-cols-5 gap-x-4 mx-12 h-[calc(100vh-80px)]">
-            <Card className="col-start-1 col-span-2 row-start-1 row-span-5 space-y-8 scrollbar-hide overflow-y-auto">
+            <Card className="col-start-1 col-span-2 row-start-1 row-span-5 space-y-8 scrollbar-hide overflow-y-auto"
+            style={{ background: "linear-gradient(45deg, #999 5%, #fff 10%, #ccc 30%, #ddd 50%, #ccc 70%, #fff 80%, #999 95%)" }} borderColor='#ffffff'>
                 <Input onChange={handlePlaylistNameChange} className="w-5/6 mx-auto block col-span-full place-self-center" placeholder="Cassette Name" />
                 <img src={cassette} alt="" className="w-5/6 mx-auto col-span-full place-self-center" />
                 <ProgressBar size="md" progress={totalDuration * 100 / MAX_TIME_IN_MS}></ProgressBar>
@@ -317,7 +318,8 @@ function CreatePlaylist() {
                 <Button type="submit" onClick={sendPlaylist} className="self-end">Submit</Button>
             </Card>
 
-            <Card className="col-start-3 col-span-3 row-start-1 row-span-2">
+            <Card className="col-start-3 col-span-3 row-start-1 row-span-2"
+            style={{ background: "linear-gradient(45deg, #999 5%, #fff 10%, #ccc 30%, #ddd 50%, #ccc 70%, #fff 80%, #999 95%)" }} borderColor='#ffffff'>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 rounded-b-lg h-full overflow-y-auto scrollbar-hide p-4">
                     <div className="col-span-full text-2xl">Selected Songs</div>
 
@@ -337,7 +339,8 @@ function CreatePlaylist() {
                 </div>
             </Card>
 
-            <Card className="col-start-3 col-span-3 row-start-3 row-span-3">
+            <Card className="col-start-3 col-span-3 row-start-3 row-span-3"
+            style={{ background: "linear-gradient(45deg, #00DEDE 5%, #87FFFF 10%, #35E6E6 30%, #23DBDB 50%, #35E6E6 70%, #87FFFF 80%, #00DEDE 95%)",}} borderColor='#ffffff'>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 content-start gap-4 rounded-b-lg  overflow-y-auto scrollbar-hide p-4 h-full">
                     <div className="grid grid-cols-5 col-span-full sticky">
                         <Input onKeyDown={sendSearchQuery} onChange={handleSearchBarChange} className="col-span-2" placeholder="Search For Song" />

@@ -76,7 +76,8 @@ export default function GenreBox({ Genre, CassetteNames }) {
     return (
         <>
             { /* Make the card a grid that automatically handles overflow */}
-            <Card className="col-span-1 overflow-y-auto scrollbar-hide p-4 h-[60vh]" style={{ background: "radial-gradient(circle,rgb(67, 230, 245),rgb(255, 255, 255))" }} borderColor='#fc90ff'>
+            <Card className="col-span-1 overflow-y-auto scrollbar-hide p-4 h-[60vh]" 
+            style={{ background: "linear-gradient(45deg, #999 5%, #fff 10%, #ccc 30%, #ddd 50%, #ccc 70%, #fff 80%, #999 95%)" }} borderColor='#ffffff'>
                 { /* Create a div inside the card to allow for padding */}
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 content-start gap-4">
                     { /* Output the genre name */}
