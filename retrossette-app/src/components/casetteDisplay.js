@@ -324,7 +324,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 player.togglePlay();
                 setRewind(false);
                 setFastForward(false);
-                setPaused(!is_paused);
+                setPaused(is_paused);
             });
         } else if (button === 'rewind') {
             sleep(buttonWait).then(() => {
@@ -496,6 +496,50 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         }
     }
 
+    function Meter({ id, isPaused }) {
+        const meterRef = useRef(null);
+        const needleRef = useRef(null);
+    
+        useEffect(() => {
+            console.log("isPaused changed:", isPaused);
+            function scaleNeedle() {
+                if (!meterRef.current || !needleRef.current) return;
+    
+                const meterHeight = meterRef.current.offsetHeight;
+                const needleHeight = meterHeight / 1.2;
+    
+                needleRef.current.style.height = `${needleHeight}px`;
+                needleRef.current.style.top = `calc(50% - ${needleHeight / 2}px)`;
+            }
+    
+            function animateNeedle() {
+                if (!needleRef.current || isPaused) return; // Stop animation when paused
+                const randomDegree = Math.random() * 180 - 90;
+                needleRef.current.style.transform = `rotate(${randomDegree}deg)`;
+            }
+    
+            scaleNeedle();
+            window.addEventListener('resize', scaleNeedle);
+    
+            // Start animation only if music is playing
+            let interval;
+            if (!isPaused) {
+                interval = setInterval(animateNeedle, 2000);
+            }
+    
+            return () => {
+                window.removeEventListener('resize', scaleNeedle);
+                clearInterval(interval);
+            };
+        }, [isPaused]); // Ensure effect updates when music state changes
+    
+        return (
+            <div ref={meterRef} className="meter-container">
+                <div ref={needleRef} className="needle"></div>
+            </div>
+        );
+    }
+
     return (
         <Card className="parent">
             <div class="div1"></div>
@@ -527,9 +571,12 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                                 </div>
                             </div>
                             <div class="db-meter-1">
-                                <div class="db-meter-outline"></div>
+                                <Meter id="meter1" isPaused={is_paused} />
+
                             </div>
-                            <div class="db-meter-2"></div>
+                            <div class="db-meter-2">
+                                <Meter id="meter2" isPaused={is_paused} />
+                            </div>
                         </div>
                     </Card>
                 </div>
