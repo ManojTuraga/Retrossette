@@ -49,6 +49,9 @@ import React, { useEffect, useState } from 'react';
 // Import the Card from retroui
 import { Card } from 'pixel-retroui';
 
+import static_img from '../images/static.png'
+import active_img from '../images/active.gif'
+
 /* This function defines the rendering behavior of this componenet */
 function HomePage() {
     // Define a state variable to store all the cassettes to their genre
@@ -76,9 +79,49 @@ function HomePage() {
     return (
         <div className="grid grid-cols-3 gap-4 mx-12">
 
-            <Card className="col-start-1 col-span-3 p-4 h-[calc(60vh-65px)] text-2xl" 
+            <Card className="col-start-1 col-span-3 p-4 h-100 text-2xl" 
             style={{ background: "linear-gradient(45deg, #999 5%, #fff 10%, #ccc 30%, #ddd 50%, #ccc 70%, #fff 80%, #999 95%)",}} borderColor='#ffffff'>
                 <h1>Most Popular</h1>
+                <div className="flex h-5/6 w-full justify-center align-center">
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-10 justify-items-center place-items-center">
+
+                    <div className="h-auto text-white aspect-square">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
+                    </div>
+
+                    <div className="h-auto text-white aspect-square">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
+                    </div>
+
+                    <div className="h-auto text-white aspect-square">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
+                    </div>
+
+                    <div className="h-auto text-white aspect-square">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
+                    </div>
+
+                    <div className="h-auto text-white aspect-square">
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            <img className="absolute opacity-0 hover:opacity-100 transition-opacity duration-300 transform hover:scale-105 origin-center" src={active_img} alt="GIF" />
+                            <img className="opacity-100 hover:opacity-0 transition-opacity duration-300" src={static_img} alt="Static" />
+                        </div>
+                    </div>
+
+                </div>
+                </div>
             </Card>
             {cassettesByGenre.map((genre) => (
                 <GenreBox Genre={genre["name"]} CassetteNames={genre["cassettes"]} />
