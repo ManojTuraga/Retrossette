@@ -405,3 +405,75 @@
   align-items: center;
   display: flex;
 }
+
+
+.meter-container {
+  position: relative;
+  width: 80%;  /* Flexible width */
+  max-width: 600px; /* Maximum width for the meter */
+  aspect-ratio: 2 / 1;  /* Enforce a 2:1 aspect ratio (width:height) */
+  background: white;
+  border-top-left-radius: 300px;
+  border-top-right-radius: 300px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  border: 2px solid #000; /* Bolder arc border */
+}
+
+.needle {
+  position: absolute;
+  width: 6px;  /* Slightly thicker needle for visibility */
+  background: red;
+  top: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  transform: rotate(-90deg); /* Start the needle at -90 degrees (left side) */
+  z-index: 2; /* Ensure the needle appears above the arc */
+  transition: transform 1s ease-in-out; /* Smooth animation for rotation */
+}
+
+/*
+<div class="meter-container" id="meter">
+      <!-- Needle -->
+      <div class="needle" id="needle"></div>
+
+      <script>
+        const meter = document.getElementById('meter');
+        const needle = document.getElementById('needle');
+
+        // Function to scale the needle based on the meter's size
+        function scaleNeedle() {
+          // Get the height and width of the meter
+          const meterHeight = meter.offsetHeight;
+          const meterWidth = meter.offsetWidth;
+
+          // Set the needle height to a value larger than half the meter's height (so it extends beyond the arc)
+          const needleHeight = meterHeight / 1.2; // Adjust this factor to make the needle longer
+
+          // Set the height of the needle
+          needle.style.height = `${needleHeight}px`;
+
+          // Adjust the needle's top position so it is centered in the meter
+          needle.style.top = `calc(50% - ${needleHeight / 2}px)`; // Center needle vertically
+        }
+
+        // Function to animate the needle rotation
+        function animateNeedle() {
+          // Randomly rotate the needle between -90 and 90 degrees (from left to right)
+          const randomDegree = Math.random() * 180 - 90;  // Random angle between -90 and 90 degrees
+
+          // Apply the rotation with smooth animation
+          needle.style.transform = `rotate(${randomDegree}deg)`;
+        }
+
+        // Initially scale the needle
+        scaleNeedle();
+
+        // Reposition and scale needle when the meter resizes
+        window.addEventListener('resize', scaleNeedle);
+
+        // Animate the needle every 2 seconds
+        setInterval(animateNeedle, 2000);
+      </script>
+    </div>
+*/
