@@ -497,16 +497,6 @@ def get_playlist_recommendation( user_uri ):
                  The specific unit of querying that we use is the user listening prefernces
                  that we store over time
     """
-
-    # THIS CODE SHOULD BE REMOVED. We need to populate the database with
-    # valid data, but we don't haVe enough real for that. We rely
-    # on the stub library to handle that
-    user_uri = retrossette_db_intf.execute_query(
-                f"""
-                SELECT user_uri FROM "user" ORDER BY RANDOM() LIMIT 1;
-                """,
-                has_return=True
-            )[0][0]
     
     # Get all the genre_ids that are supported in the database
     genre_ids = retrossette_db_intf.execute_query(
@@ -533,7 +523,7 @@ def get_playlist_recommendation( user_uri ):
 
     # If the previous query has a return, that return will be used
     # for the computation
-    if len( result ) > 0:
+    if len( result ) > 0 and result[0][0] is not None:
         total_num = result[0][0]
 
     else:

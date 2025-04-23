@@ -194,7 +194,7 @@ def api_update_theme( data ):
 # playlist based on their listening patterns
 @socketio.on( "/api/get_recommendation" )
 def api_get_recommendation( data ):
-    retrossette_db_queries.get_playlist_recommendation( session[ "UserURI" ] )
+    return { "status" : "success", "message": retrossette_db_queries.get_playlist_recommendation( session[ "UserURI" ] ) }
 
 # This is an API endpoint to just get any playlist based on the associated
 # genre

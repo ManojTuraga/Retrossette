@@ -112,6 +112,13 @@ function App() {
         setProfileImage(response["message"]["profile_image"]);
     })
 
+
+    function redirect_on_recommendation() {
+        SOCKET.emit("/api/get_recommendation", {}, (response) => {
+            window.location.href = `/PlayMusic?id=${response[ "message" ]}`;
+        })
+    }
+
     // Render the page to route each required componenet to it's
     // corresponding URL. Right now the only required componenets
     // are the CreatePlaylist page, the ViewPlaylists page, and the
@@ -122,7 +129,7 @@ function App() {
     return (
         <>
             <Router>
-                <Button className="fixed bottom-5 right-5 w-16 h-16 flex items-center justify-center text-2xl z-50" style={{ background: "linear-gradient(45deg, #FF82F9 5%, #FFCFFF 10%, #FFC2FD 30%, #FFA1FC 50%, #FFC2FD 70%, #FFCFFF 80%, #FF82F9 95%)",}} borderColor='#ffffff'>
+                <Button onClick={redirect_on_recommendation} className="fixed bottom-5 right-5 w-16 h-16 flex items-center justify-center text-2xl z-50" style={{ background: "linear-gradient(45deg, #FF82F9 5%, #FFCFFF 10%, #FFC2FD 30%, #FFA1FC 50%, #FFC2FD 70%, #FFCFFF 80%, #FF82F9 95%)", }} borderColor='#ffffff'>
                     ?
                 </Button>
                 <Routes>
