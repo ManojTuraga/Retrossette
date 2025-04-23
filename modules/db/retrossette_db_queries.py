@@ -392,6 +392,29 @@ def update_theme( user_uri, theme_id ):
             vars=( theme_id, ),
             has_return=False
         )
+    
+def search_playlists(search_string):
+    """
+    Function: Search Playlists
+
+    Description: This function searches for playlists whose names match the given search string.
+    """
+    # Format the search string with wildcards for partial matching
+    search_pattern = f"%{search_string}%"
+
+    # Execute the query with parameterized input
+    result = retrossette_db_intf.execute_query(
+        """
+        SELECT playlist_id, playlist_name FROM PLAYLIST WHERE playlist_name ILIKE %s;
+        """,
+        (search_pattern,),
+        has_return=True
+    )
+
+    result = [ { "name" : n, "id" : i } for i, n in result ]
+
+    return result
+
 
 def add_user( user_uri, user_display_name, user_email, user_profile_image=None ):
     """

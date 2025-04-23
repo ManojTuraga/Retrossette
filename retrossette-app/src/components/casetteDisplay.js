@@ -4,11 +4,12 @@ import "../css/CassettePlayer.css"
 
 import cassette from '../images/active.gif'
 
-import { Card, ProgressBar, Button, Popup, TextArea } from 'pixel-retroui'
+import { Card, ProgressBar, Button, Popup, TextArea, Input } from 'pixel-retroui'
 
 // Import the cassette buttons
 import { FaPlay, FaPause, FaFastForward, FaFastBackward } from "react-icons/fa";
 
+import { SOCKET } from './socket';
 
 // Sleep for ms milliseconds
 function sleep(ms) {
@@ -43,6 +44,7 @@ function getTotalCassetteLength(songList) {
 
     return totalCassetteLength;
 }
+
 
 // Get the absolute position in ms in a current cassette with list of songs
 // songList playing current song current_song_uri, and the current position
@@ -155,6 +157,21 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     const [volume, setVolume] = useState(0.5);
 
     const [progress, setProgress] = useState(0); // Progress as a percentage
+
+    const [openSearch, setOpenSearch] = useState(false);
+
+    const [searchString, setSearchString] = useState("");
+
+    const [searchResults, setSearchResults ] = useState( [] );
+
+    function sendSearchQuery(e) {
+        if (e.key == "Enter") {
+            SOCKET.emit("/api/search_database", { message: searchString.trim() }, (response) => {
+                console.log( response[ "message" ] );
+                setSearchResults( response[ "message" ] )
+            });
+        }
+    }
 
     const getAngle = (x, y) => {
         const rect = circleRef.current.getBoundingClientRect();
@@ -499,40 +516,40 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     function Meter({ id, isPaused }) {
         const meterRef = useRef(null);
         const needleRef = useRef(null);
-    
+
         useEffect(() => {
             console.log("isPaused changed:", isPaused);
             function scaleNeedle() {
                 if (!meterRef.current || !needleRef.current) return;
-    
+
                 const meterHeight = meterRef.current.offsetHeight;
                 const needleHeight = meterHeight / 1.2;
-    
+
                 needleRef.current.style.height = `${needleHeight}px`;
                 needleRef.current.style.top = `calc(50% - ${needleHeight / 2}px)`;
             }
-    
+
             function animateNeedle() {
                 if (!needleRef.current || isPaused) return; // Stop animation when paused
                 const randomDegree = Math.random() * 180 - 90;
                 needleRef.current.style.transform = `rotate(${randomDegree}deg)`;
             }
-    
+
             scaleNeedle();
             window.addEventListener('resize', scaleNeedle);
-    
+
             // Start animation only if music is playing
             let interval;
             if (!isPaused) {
                 interval = setInterval(animateNeedle, 2000);
             }
-    
+
             return () => {
                 window.removeEventListener('resize', scaleNeedle);
                 clearInterval(interval);
             };
         }, [isPaused]); // Ensure effect updates when music state changes
-    
+
         return (
             <div ref={meterRef} className="meter-container">
                 <div ref={needleRef} className="needle"></div>
@@ -547,7 +564,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 <div class="cassette-area">
                     <Card id="cassette-casing" className="bg-transparent">
                         <div id="cassette-anim-spot">
-                            <img src={cassette} alt="" className="w-5/6 h-5/6 relative place-self-center" />
+                            <img onClick={() => setOpenSearch(true)} src={cassette} alt="" className="w-5/6 h-5/6 relative place-self-center" />
                         </div>
                     </Card>
                 </div>
@@ -663,6 +680,18 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 <br />
                 <TextArea style={{ resize: "vertical" }} onChange={(e) => setComment(e.target.value)} value={comment} placeholder='Enter your comment here...' />
                 <Button onClick={() => { onSubmit(rating, comment); alert("Review submitted! Thank you."); }}>Submit</Button>
+            </Popup>
+            <Popup
+                isOpen={openSearch}
+                onClose={() => setOpenSearch(false)}
+                className='text-center'>
+                <Input placeholder='Enter a search term' onChange={(e) => setSearchString(e.target.value)} onKeyDown={sendSearchQuery}>
+                </Input>
+                {
+                searchResults.map((cassette) => {
+                    return( <Card onClick={()=>{window.location.href = `/PlayMusic?id=${cassette[ "id" ]}`;}}>{cassette["name"]}</Card>)
+                }) 
+                }
             </Popup>
         </Card>
     );
