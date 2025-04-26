@@ -208,8 +208,8 @@ def api_get_cassette_by_genre( data ):
 def api_get_cassette_by_genre( data ):
     return { "status" : "success", "message" : retrossette_db_queries.get_most_popular() }
 
-# This is an api endpoint that will get the most popular song
-# at any given time
+# This is an api endpoint that will search the database
+# based on a given string
 @socketio.on( "/api/search_database" )
 def api_get_cassette_by_genre( data ):
     print( retrossette_db_queries.search_playlists( data[ "message" ] ) )

@@ -49,13 +49,15 @@ import React, { useEffect, useState } from 'react';
 // Import the Card from retroui
 import { Card, Popup, Button } from 'pixel-retroui';
 
+// Import the cassette 8 bit gif 
+// Source https://www.deviantart.com/wavegazer/art/80-s-Tape-Rainbow-543222626
 import static_img from '../images/static.png'
 import active_img from '../images/active.gif'
-
 
 // Get the button sound effect
 import ButtonSound from "../boombox_assets/button_press_sfx.mp3"
 
+// Define a sleep function to delay the sound effect of button clicks
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -71,8 +73,13 @@ function ClickSound() {
 function HomePage() {
     // Define a state variable to store all the cassettes to their genre
     const [cassettesByGenre, setCassettesByGenre] = useState([]);
+
+    // Define a state variable to store the most popular cassettes
     const [mostPopular, setMostPopular] = useState([]);
+
+    // Define a state varibale to store the state of the popup
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+
     // Define a state variable for the name of the playlist
     const [selectedName, setSelectedName] = useState("");
 
@@ -86,6 +93,7 @@ function HomePage() {
             console.log(first_response["message"]);
             for (let genre of first_response["message"]) {
                 SOCKET.emit("/api/get_cassette_by_genre", { id: genre["id"] }, (response) => {
+                    // Update the state of the cassettes by genre
                     setCassettesByGenre(prevState => [
                         ...prevState,
                         { name: genre["name"], cassettes: response["message"] }

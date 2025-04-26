@@ -26,7 +26,7 @@ Side Effects:
     Interactions on the webpage may lead to changes in database state
 
 Invariants:
-    There will only be on instance of the server running at all times
+    There will only be one instance of the server running at all times
 
 Known Faults
     None
@@ -464,13 +464,6 @@ const SpotifyPlayer = ({ token, listOfSongs }) => {
                     }}
                         onClick={() => { pressCassetteButton('fastforward', player); }}>
                     </button>
-
-                    {/*
-                  <div className="now-playing__side">
-                      <div className="now-playing__name">{current_track.name}</div>
-                      <div className="now-playing__artist">{current_track.artists[0].name}</div>
-                  </div>
-		   */}
                 </div>
             </div>
         );

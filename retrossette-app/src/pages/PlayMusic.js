@@ -51,9 +51,7 @@ import SpotifyPlayer from './SpotifyPlayer';
 // Import the socket created in the socket component
 import { SOCKET } from '../components/socket';
 
-// Import the review form
-import ReviewForm from '../components/ratings';
-
+// Import the cassette component
 import CassetteDisplay from '../components/casetteDisplay';
 
 /*******************************************************************************

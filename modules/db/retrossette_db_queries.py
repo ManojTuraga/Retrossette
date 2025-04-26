@@ -165,6 +165,15 @@ def get_cassettes_in_genre( genre_id ):
     return result
 
 def get_rating( user_uri, playlist_id ):
+    """
+    Function: Get rating and the user comment
+
+    Description: This function will get the the specific rating and comment
+                 that a user gave to a playlist that they listened to
+    """
+
+    # Fetch the numbers of stars that the user gave as well as they comment
+    # that they made
     result = retrossette_db_intf.execute_query(
         """
         SELECT rates_stars, rates_comment from rates where user_uri=%s AND playlist_id=%s; 
@@ -173,9 +182,11 @@ def get_rating( user_uri, playlist_id ):
         has_return=True
     )
 
+    # If there is a comment, fetch it
     if len( result ) > 0:
         return { "stars" : result[ 0 ][ 0 ], "comment" : result[ 0 ][ 1 ] }
     
+    # Otherwise, return an empty dictionary
     return {}
 
 
@@ -411,6 +422,7 @@ def search_playlists(search_string):
         has_return=True
     )
 
+    # Extract the name and id and convert it to a dictionary
     result = [ { "name" : n, "id" : i } for i, n in result ]
 
     return result

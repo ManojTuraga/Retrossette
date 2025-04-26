@@ -147,23 +147,34 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     // Determines how fast rewind or fast forward is
     const speedupFactor = 4;
 
+    // Define a varable to hold the rotation of the volume knob
     const [rotation, setRotation] = useState(180);
+
+    // Define a variable to hold the reference to the volume knob
     const circleRef = useRef(null);
 
+    // Define a variable to determine if the popup should be open
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
+    // Define a variable to determine if the cassette is powered on
     const [powerOn, setPowerOn] = useState(false);
 
+    // Define a variable to hold the current volume
     const [volume, setVolume] = useState(0.5);
 
     const [progress, setProgress] = useState(0); // Progress as a percentage
 
+    // Define a variable to determine if the search popup should be open
     const [openSearch, setOpenSearch] = useState(false);
 
+    // Define a variable to hold the search string
     const [searchString, setSearchString] = useState("");
 
+    // Define a variable to hold the search reslts
     const [searchResults, setSearchResults ] = useState( [] );
 
+    // This function handles the submission of a search string and returns
+    // the cassette results
     function sendSearchQuery(e) {
         if (e.key == "Enter") {
             SOCKET.emit("/api/search_database", { message: searchString.trim() }, (response) => {
@@ -173,18 +184,22 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         }
     }
 
+    // This function gets the anmgle of the volume knob
     const getAngle = (x, y) => {
         const rect = circleRef.current.getBoundingClientRect();
+        // Get the center of the circle
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
+        // Find the angle between the center of the circle and the mouse position
         const deltaX = x - centerX;
         const deltaY = y - centerY;
-
         const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI); // Convert radians to degrees
+
         return angle;
     };
 
+    // This function handles the mouse down event for the volume knob
     const handleMouseDown = (e) => {
         const initialAngle = getAngle(e.clientX, e.clientY);
         circleRef.current.dataset.initialAngle = initialAngle; // Store the initial angle
@@ -192,9 +207,12 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         document.addEventListener("mouseup", handleMouseUp);
     };
 
+    // This function handles the mouse move event for the volume knob
     const handleMouseMove = (e) => {
         const initialAngle = parseFloat(circleRef.current.dataset.initialAngle);
         const currentAngle = getAngle(e.clientX, e.clientY);
+        
+        // Get the change in the angle
         let deltaAngle = currentAngle - initialAngle;
 
         // Ensure continuity in rotation:
@@ -202,6 +220,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         if (deltaAngle < -180) deltaAngle += 360; // Adjust for counterclockwise wraparound
 
         setRotation((prevRotation) => {
+            // Calculate the new rotation
             let newRotation = prevRotation + deltaAngle;
 
             // Prevent rotation from exceeding 360 degrees or dropping below 0
@@ -216,7 +235,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
         circleRef.current.dataset.initialAngle = currentAngle; // Update the initial angle
     };
 
-
+    // This function handles the mouse up event for the volume knob
     const handleMouseUp = () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
@@ -328,7 +347,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
 
         // Controls state based on what button was pressed
         if (button === 'play' && is_paused) {
-
+            // If the cassette is paused, then play the cassette    
             sleep(buttonWait).then(() => {
                 player.togglePlay();
                 setRewind(false);
@@ -337,6 +356,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             });
         }
         else if (button === 'pause' && !is_paused) {
+            // If the cassette is playing, then pause the cassette
             sleep(buttonWait).then(() => {
                 player.togglePlay();
                 setRewind(false);
@@ -344,6 +364,8 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 setPaused(is_paused);
             });
         } else if (button === 'rewind') {
+            // If the cassette is rewinding, then play the cassette
+            // and set the rewind state to true
             sleep(buttonWait).then(() => {
                 if (!is_paused) {
                     player.togglePlay();
@@ -354,6 +376,8 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             });
 
         } else if (button === 'fastforward') {
+            // If the cassette is fast forwarding, then play the cassette
+            // and set the fast forward state to true
             sleep(buttonWait).then(() => {
                 if (!is_paused) {
                     player.togglePlay();
@@ -443,11 +467,12 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     useEffect(() => {
         let listOfSongURIs = [];
 
-
+        // Get the list of song URIs from the list of songs
         for (let URI of listOfSongs) {
             listOfSongURIs.push(URI.slice(14));
         }
 
+        // Fetch the song information from the Spotify API
         fetch(`https://api.spotify.com/v1/tracks?ids=${listOfSongURIs.join(',')}`, {
             method: 'GET',
             headers: {
@@ -460,6 +485,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
                 return response.json();
             }
         }).then(json => {
+            // Set the song list with the fetched data
             setSongList(json['tracks']);
             console.log(json['tracks']);
         }).catch(err => {
@@ -468,12 +494,14 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     }, [listOfSongs]);
 
     useEffect(() => {
+        // Calculate the total length of the cassette
         const cassetteLength = getTotalCassetteLength(songList);
         setTotalCassetteLength(cassetteLength);
         console.log(`Current Cassette Length: ${printTime(cassetteLength)}`);
     }, [songList]);
 
     useEffect(() => {
+        // Set the volume of the player when the volume state changes
         if (player) {
             player.setVolume(volume).then(() => {
                 console.log(volume);
@@ -484,6 +512,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     useEffect(() => {
         let interval;
 
+        // Function to update the progress of the cassette
         const updateProgress = async () => {
             const state = await player.getCurrentState();
             if (state) {
@@ -502,9 +531,11 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
     }, [player, totalCassetteLength]);
 
     function Timer(is_min, n, milliseconds) {
+        // Convert milliseconds to minutes and seconds
         const minutes = Math.floor(milliseconds / 60000).toString().padStart(2, '0');
         const seconds = ((milliseconds % 60000) / 1000).toFixed(0).toString().padStart(2, '0');
-
+        
+        // Return the appropriate value based on is_min
         if (is_min) {
             return minutes[n]
         }

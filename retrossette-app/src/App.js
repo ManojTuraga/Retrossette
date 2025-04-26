@@ -34,7 +34,7 @@ Invariants:
 Known Faults
     None
     
-Sources: React Documentation, Socketio Documentation
+Sources: React Documentation, Socketio Documentation, RetroUI Documentation
 ******************************************************************************/
 
 /******************************************************************************
@@ -107,12 +107,15 @@ function App() {
         }
     })
 
+    // Get the profile information from the server
     SOCKET.emit("/api/get_profile_information", {}, (response) => {
         setProfileName(response["message"]["profile_name"]);
         setProfileImage(response["message"]["profile_image"]);
     })
 
-
+    // This function will get a recommendation from the server
+    // and redirect the user to the PlayMusic page with the
+    // recommendation id
     function redirect_on_recommendation() {
         SOCKET.emit("/api/get_recommendation", {}, (response) => {
             window.location.href = `/PlayMusic?id=${response[ "message" ]}`;
