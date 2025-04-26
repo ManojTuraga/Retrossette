@@ -1,3 +1,14 @@
+/******************************************************************************
+Module: CassetteSection.css
+Creation Date: February 18th, 2025
+Authors: Connor Forristal
+Contributors: Manoj Turaga, Conor Forristal
+
+Description:
+    This module defines the styling for the CassettePlayer component.
+******************************************************************************/
+
+/* Define the parent container for the cassette player */
 .parent {
   display: grid;
   grid-template-columns: 1fr repeat(2, 4fr) 2fr 1fr;
@@ -18,6 +29,7 @@
   box-shadow: -2em 2em 2em 0.5em black;
 }
 
+/* Define grid areas for individual sections */
 .div1 {
   grid-area: 1 / 1 / 2 / 2;
 }
@@ -58,8 +70,7 @@
   grid-area: 2 / 5 / 3 / 6;
 }
 
-
-
+/* Define the styling for the cassette area */
 .cassette-area {
   width: 100%;
   height: 100%;
@@ -88,6 +99,7 @@
   display: flex;
 }
 
+/* Define the styling for the power button area */
 .power-area {
   width: 100%;
   height: 100%;
@@ -108,6 +120,7 @@
 
 }
 
+/* Define the styling for the play buttons container */
 .play-buttons-flex-container {
   width: 100%;
   height: 100%;
@@ -126,7 +139,7 @@
   width: 85%;
 }
 
-
+/* Define the styling for the rewind button area */
 .rewind-area {
   grid-area: 1 / 1 / 2 / 2;
   justify-content: center;
@@ -145,7 +158,7 @@
   align-self: center;
 }
 
-
+/* Define the styling for the fast-forward button area */
 .fast-foward-area {
   grid-area: 1 / 2 / 2 / 3;
   justify-content: center;
@@ -165,7 +178,7 @@
 
 }
 
-
+/* Define the styling for the play button area */
 .play-area {
   grid-area: 1 / 4 / 2 / 5;
   justify-content: center;
@@ -185,6 +198,7 @@
 
 }
 
+/* Define the styling for the pause button area */
 .pause-area {
   grid-area: 1 / 5 / 2 / 6;
   justify-content: center;
@@ -204,6 +218,7 @@
 
 }
 
+/* Define the styling for the decibel meter container */
 .db-meter-flex-container {
   width: 100%;
   height: 100%;
@@ -220,6 +235,7 @@
   display: flex;
 }
 
+/* Define the styling for the decibel meter area */
 .db-meter-area {
   border: 2px solid #666666;
   width: 90%;
@@ -231,8 +247,7 @@
   grid-row-gap: 0px;
 }
 
-
-
+/* Define the styling for the timer container */
 .timer-container {
   grid-area: 1 / 1 / 2 / 2;
   border: 2px solid #666666;
@@ -251,6 +266,7 @@
   grid-row-gap: 0px;
 }
 
+/* Define the styling for the timer digits */
 #timer-digit-1 {
   grid-area: 1 / 1 / 2 / 2;
   border: 2px solid #666666;
@@ -275,8 +291,7 @@
   text-align: center;
 }
 
-
-
+/* Define the styling for the timer lights */
 .timer-lights-container {
   grid-area: 1 / 2 / 2 / 3;
   border: 2px solid #666666;
@@ -311,7 +326,7 @@
   box-shadow: 0em 0em 1em 0em red;
 }
 
-
+/* Define the styling for the decibel meters */
 .db-meter-1 {
   grid-area: 2 / 1 / 3 / 2;
   border: 2px solid #666666;
@@ -328,6 +343,7 @@
   display: flex;
 }
 
+/* Define the styling for the volume control area */
 .volume-area {
   width: 100%;
   height: 100%;
@@ -368,6 +384,7 @@
   transition: transform 0.1s ease;
 }
 
+/* Define the styling for the time-left bar */
 .time-left-bar-container {
   width: 100%;
   height: 100%;
@@ -390,6 +407,7 @@
   border-radius: 100px;
 }
 
+/* Define the styling for the share button container */
 .share-container {
   width: 100%;
   height: 100%;
@@ -406,7 +424,7 @@
   display: flex;
 }
 
-
+/* Define the styling for the meter container */
 .meter-container {
   position: relative;
   width: 80%;
@@ -424,6 +442,7 @@
   /* Bolder arc border */
 }
 
+/* Define the styling for the needle in the meter */
 .needle {
   position: absolute;
   width: 6px;
@@ -440,6 +459,7 @@
   /* Smooth animation for rotation */
 }
 
+/* Define the styling for the meter outline */
 .db-meter-outline {
   width: 100%;
   height: 100%;
