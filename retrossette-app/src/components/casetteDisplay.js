@@ -7,7 +7,7 @@ import cassette from '../images/active.gif'
 import { Card, ProgressBar, Button, Popup, TextArea, Input } from 'pixel-retroui'
 
 // Import the cassette buttons
-import { FaPlay, FaPause, FaFastForward, FaFastBackward } from "react-icons/fa";
+import { FaPlay, FaPause, FaFastForward, FaFastBackward, FaPowerOff } from "react-icons/fa";
 
 import { SOCKET } from './socket';
 
@@ -644,7 +644,7 @@ export default function CassetteDisplay({ token, listOfSongs, rating, setRating,
             <div class="div6">
                 <div class="power-area">
                     <div id="power-text">Power</div>
-                    <Card id="power-button" bg={is_active ? '#E4080A' : ''}></Card>
+                    <Card id="power-button" bg={is_active ? '#E4080A' : ''}><div className="flex h-full w-full items-center justify-center"><FaPowerOff className='m-auto text-4xl' /></div></Card>
                 </div>
             </div>
             <div class="div7">
